@@ -13,6 +13,12 @@
             FontSize="45"
             Text="Hello, Sailor!"
             Foreground="White"
-            FontFamily="{StaticResource KarminaBoldItalic}"/>
+            FontFamily="{StaticResource KarminaBoldItalic}">
+            <TextBlock.Effect>
+                <DropShadowEffect>
+                    <DropShadowEffect.ShadowDepth>1</DropShadowEffect.ShadowDepth>
+                </DropShadowEffect>
+            </TextBlock.Effect>
+        </TextBlock>
     </Grid>
 </Window>
