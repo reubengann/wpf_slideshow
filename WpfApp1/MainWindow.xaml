@@ -9,19 +9,8 @@
     <Viewbox Width="{Binding ActualWidth, RelativeSource = {RelativeSource AncestorType = {x:Type Window}}}" 
       Height="{Binding ActualHeight, RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}"
           HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid Background="Green" HorizontalAlignment="Center" VerticalAlignment="Center" >
+        <Grid Background="Green" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="MainGrid">
             <Border Width="1600" Height="900"/>
-            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
-            FontSize="100"
-            Text="Hello, Sailor!"
-            Foreground="White"
-            FontFamily="{StaticResource KarminaBoldItalic}">
-                <TextBlock.Effect>
-                    <DropShadowEffect>
-                        <DropShadowEffect.ShadowDepth>1</DropShadowEffect.ShadowDepth>
-                    </DropShadowEffect>
-                </TextBlock.Effect>
-            </TextBlock>
         </Grid>
     </Viewbox>
 </Window>

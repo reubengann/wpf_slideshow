@@ -5,28 +5,37 @@ namespace WpfApp1
 {
     public class Slideshow
     {
-        List<Slide> Slides;
+        public List<Slide> Slides;
         public Slideshow()
         {
             Slides = new List<Slide>();
         }
     }
 
-    class Slide
+    public class Slide
     {
         Color BackgroundColor;
-        List<SlideItem> Items;
+        public List<SlideItem> Items;
+        public Slide()
+        {
+            Items = new List<SlideItem>();
+        }
     }
 
-    class SlideItem
+    public class SlideItem
     {
 
     }
 
-    class SlideText : SlideItem
+    public class SlideText : SlideItem
     {
-        string Text;
+        public string Text;
         Color color;
+
+        public SlideText(string text)
+        {
+            Text = text;
+        }
     }
 
     class SlideImage : SlideItem
