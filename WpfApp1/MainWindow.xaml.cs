@@ -32,6 +32,7 @@ namespace WpfApp1
     public interface SlideShowItemFactory
     {
         public void AddTextItem(SlideText text);
+        public void RenderSlide(Slide slide);
     }
 
     public class WPFSlideShowFactory : SlideShowItemFactory
@@ -43,6 +44,23 @@ namespace WpfApp1
             grid = mainGrid;
         }
 
+        
+
+        public void RenderSlide(Slide slide)
+        {
+            grid.Children.Clear();
+            foreach(SlideItem si in slide.Items)
+            {
+                if (si.GetType() == typeof(SlideText))
+                {
+                    SlideText? t = si as SlideText;
+                    if (t == null)
+                        throw new NullReferenceException("Cannot add null text item");
+                    AddTextItem(t);
+                }
+            }
+        }
+
         public void AddTextItem(SlideText text)
         {
             var tb = new TextBlock()
@@ -52,6 +70,7 @@ namespace WpfApp1
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,
+                MaxWidth = 1600,
                 FontSize = 100
             };
             tb.Effect = new DropShadowEffect

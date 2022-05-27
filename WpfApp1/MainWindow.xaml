@@ -5,12 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Background="Black">
+        Title="MainWindow" Height="450" Width="800" Background="Black"
+        d:DataContext="{d:DesignInstance Type=local:SlideShowViewModel, IsDesignTimeCreatable=False}">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding NextSlide}" Key="Next"/>
+        <KeyBinding Command="{Binding PreviousSlide}" Key="PageUp"/>
+    </Window.InputBindings>
     <Viewbox Width="{Binding ActualWidth, RelativeSource = {RelativeSource AncestorType = {x:Type Window}}}" 
       Height="{Binding ActualHeight, RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}"
           HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid Background="Green" HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="MainGrid">
-            <Border Width="1600" Height="900"/>
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border Width="1600" Height="900" Background="Green" />
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="MainGrid"/>
         </Grid>
     </Viewbox>
 </Window>
