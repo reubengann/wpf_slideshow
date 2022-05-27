@@ -71,6 +71,7 @@ namespace WpfApp1
                 VerticalAlignment = VerticalAlignment.Center,
                 FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,
                 MaxWidth = 1600,
+                TextWrapping = TextWrapping.Wrap,
                 FontSize = 100
             };
             tb.Effect = new DropShadowEffect
