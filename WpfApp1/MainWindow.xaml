@@ -16,7 +16,14 @@
           HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
             <Border Width="1600" Height="900" Background="Green" />
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="MainGrid"/>
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="MainGrid" Width="1600" Height="900">
+                <TextBlock Text="Unfortunately, there's a radio connected to my brain."
+                           Foreground="White"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontFamily="{StaticResource KarminaBoldItalic}"
+                           FontSize="100"
+                           />
+            </Grid>
         </Grid>
     </Viewbox>
 </Window>
