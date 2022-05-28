@@ -14,7 +14,7 @@ namespace WpfApp1
 
     public class Slide
     {
-        Color BackgroundColor;
+        public Color BackgroundColor = Color.Black;
         public List<SlideItem> Items;
         public Slide()
         {

@@ -11,11 +11,16 @@
         <KeyBinding Command="{Binding NextSlide}" Key="Next"/>
         <KeyBinding Command="{Binding PreviousSlide}" Key="PageUp"/>
     </Window.InputBindings>
+    <Window.Resources>
+        <local:ColorToSolidColorBrushValueConverter  x:Key="ColorToSolidColorBrush_ValueConverter"/>
+    </Window.Resources>
     <Viewbox Width="{Binding ActualWidth, RelativeSource = {RelativeSource AncestorType = {x:Type Window}}}" 
       Height="{Binding ActualHeight, RelativeSource ={RelativeSource AncestorType = {x:Type Window}}}"
           HorizontalAlignment="Center" VerticalAlignment="Center">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-            <Border Width="1600" Height="900" Background="Green" />
+            <Border Width="1600" Height="900" Background="{Binding CurrentBackgroundColor, Converter={StaticResource ColorToSolidColorBrush_ValueConverter}}">
+            </Border>
+            
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="MainGrid" Width="1600" Height="900">
                 <TextBlock Text="Unfortunately, there's a radio connected to my brain."
                            Foreground="White"

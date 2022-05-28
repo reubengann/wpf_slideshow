@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,6 +78,25 @@ namespace WpfApp1
                 ShadowDepth = 1
             };
             grid.Children.Add(tb);
+        }
+    }
+
+    public class ColorToSolidColorBrushValueConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is System.Drawing.Color)
+            {
+                var c = (System.Drawing.Color)value;
+                Color color = Color.FromArgb(c.A, c.R, c.G, c.B);
+                return new SolidColorBrush(color);
+            }
+            throw new NotImplementedException();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }
