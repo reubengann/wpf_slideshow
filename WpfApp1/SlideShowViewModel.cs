@@ -47,10 +47,10 @@ namespace WpfApp1
             this.factory = factory;
             slideshow = new Slideshow();
             Slide a = new();
-            a.Items.Add(new SlideText("Hello, Sailor!!!"));
+            a.Items.Add(new SlideText("Hello, Sailor!!!") { color = Color.Black});
             a.BackgroundColor = Color.Red;
             Slide b = new();
-            b.Items.Add(new SlideText("There are 69,105 leaves in the pile."));
+            b.Items.Add(new SlideText("There are 69,105 leaves in the pile.") { color = Color.Yellow });
             b.BackgroundColor = Color.Green;
             Slide c = new();
             c.Items.Add(new SlideText("Unfortunately, there's a radio connected to my brain."));

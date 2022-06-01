@@ -64,10 +64,11 @@ namespace WpfApp1
 
         public void AddTextItem(SlideText text)
         {
+            var c = text.color;
             var tb = new TextBlock()
             {
                 Text = text.Text,
-                Foreground = new SolidColorBrush(Colors.White),
+                Foreground = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B)),
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,

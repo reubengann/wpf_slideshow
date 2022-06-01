@@ -30,7 +30,7 @@ namespace WpfApp1
     public class SlideText : SlideItem
     {
         public string Text;
-        Color color;
+        public Color color = Color.White;
 
         public SlideText(string text)
         {
