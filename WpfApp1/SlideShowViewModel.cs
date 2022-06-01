@@ -53,7 +53,7 @@ namespace WpfApp1
             b.Items.Add(new SlideText("There are 69,105 leaves in the pile.") { color = Color.Yellow });
             b.BackgroundColor = Color.Green;
             Slide c = new();
-            c.Items.Add(new SlideText("Unfortunately, there's a radio connected to my brain."));
+            c.Items.Add(new SlideText("Unfortunately, there's a radio\nconnected to my brain."));
             c.BackgroundColor = Color.Blue;
             Slide d = new();
             d.Items.Add(new SlideText("That's it."));

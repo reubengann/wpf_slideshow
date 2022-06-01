@@ -72,7 +72,8 @@ namespace WpfApp1
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,
-                FontSize = 100
+                FontSize = 100,
+                TextAlignment=TextAlignment.Center
             };
             tb.Effect = new DropShadowEffect
             {
