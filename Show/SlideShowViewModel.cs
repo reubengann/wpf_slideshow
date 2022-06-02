@@ -3,7 +3,7 @@ using System;
 using System.Drawing;
 using System.Windows.Input;
 
-namespace WpfApp1
+namespace Show
 {
     internal class SlideShowViewModel : BaseViewModel
     {

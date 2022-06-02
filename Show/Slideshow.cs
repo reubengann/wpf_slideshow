@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace WpfApp1
+namespace Show
 {
     public class Slideshow
     {
