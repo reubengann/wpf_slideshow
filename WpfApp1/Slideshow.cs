@@ -20,6 +20,8 @@ namespace WpfApp1
         {
             Items = new List<SlideItem>();
         }
+
+        public void Add(SlideItem item) => Items.Add(item);
     }
 
     public class SlideItem

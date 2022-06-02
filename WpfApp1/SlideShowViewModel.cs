@@ -45,23 +45,8 @@ namespace WpfApp1
         public SlideShowViewModel(SlideShowItemFactory factory)
         {
             this.factory = factory;
-            slideshow = new Slideshow();
-            Slide a = new();
-            a.Items.Add(new SlideText("Hello, Sailor!!!") { color = Color.Black});
-            a.BackgroundColor = Color.Red;
-            Slide b = new();
-            b.Items.Add(new SlideText("There are 69,105 leaves in the pile.") { color = Color.Yellow });
-            b.BackgroundColor = Color.Green;
-            Slide c = new();
-            c.Items.Add(new SlideText("Unfortunately, there's a radio\nconnected to my brain."));
-            c.BackgroundColor = Color.Blue;
-            Slide d = new();
-            d.Items.Add(new SlideText("That's it."));
-            d.BackgroundColor = Color.Purple;
-            slideshow.Slides.Add(a);
-            slideshow.Slides.Add(b);
-            slideshow.Slides.Add(c);
-            slideshow.Slides.Add(d);
+            SlideshowReader foobar = new SlideshowReader("../../../my.show");
+            slideshow = foobar.Load();
             RenderSlide();
         }
 
