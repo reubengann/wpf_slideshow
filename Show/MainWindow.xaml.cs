@@ -79,6 +79,7 @@ namespace Show
             {
                 ShadowDepth = 1
             };
+            tb.Margin = new Thickness(0,  2 * (900 - tb.FontSize) * (text.YCoordinate - 0.5), 0, 0);
             grid.Children.Add(tb);
         }
     }

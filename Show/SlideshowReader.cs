@@ -53,8 +53,21 @@ namespace Show
                             }
                             catch(FormatException e) 
                             {
-                                Debug.WriteLine("Error on line {0}: Expected four floats, but got {1}", i, e.Message);
+                                Debug.WriteLine("Error on line {0}: Expected four floats in background color, but got {1}", i, e.Message);
                             }
+                            break;
+                        case "y":
+                            try 
+                            {
+                                if (CurrentSlide == null)
+                                {
+                                    Debug.WriteLine("Got text y coordinate on line {0}, but no slide has been started", i);
+                                    continue;
+                                }
+                                if (CurrentSlide.CurrentSlideText == null)
+                                    CurrentSlide.Add(new SlideText("") { YCoordinate = float.Parse(remainder) });
+                            }
+                            catch(FormatException e) { Debug.WriteLine("Error on line {0}: Expected floats, but got {1}", i, e.Message); }
                             break;
                         default:
                             Debug.WriteLine("***************COMMAND {0}, RHS: {1}", command, remainder);
