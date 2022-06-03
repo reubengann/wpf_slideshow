@@ -67,7 +67,12 @@ namespace Show
                         Debug.WriteLine("Got text on line {0}, but no slide has been started", i);
                     else
                     {
-                        CurrentSlide.Add(new SlideText(line));
+                        if(CurrentSlide.CurrentSlideText == null)
+                            CurrentSlide.Add(new SlideText(line));
+                        else
+                        {
+                            CurrentSlide.CurrentSlideText.Text += $"\n{line}";
+                        }
                     }
                 }
             }
