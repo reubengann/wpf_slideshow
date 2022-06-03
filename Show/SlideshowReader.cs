@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -38,6 +39,23 @@ namespace Show
                             CurrentSlide = new Slide();
                             slideshow.Slides.Add(CurrentSlide);
                             break;
+                        case "background":
+                            if(CurrentSlide == null)
+                            {
+                                Debug.WriteLine("Got backgound color on line {0}, but no slide has been started", i);
+                                continue;
+                            }
+                            try
+                            {
+                                float[] FracColors = GetFourFloats(remainder);
+                                Color background = GetColorFromFloats(FracColors);
+                                CurrentSlide.BackgroundColor = background;
+                            }
+                            catch(FormatException e) 
+                            {
+                                Debug.WriteLine("Error on line {0}: Expected four floats, but got {1}", i, e.Message);
+                            }
+                            break;
                         default:
                             Debug.WriteLine("***************COMMAND {0}, RHS: {1}", command, remainder);
                             break;
@@ -54,6 +72,19 @@ namespace Show
                 }
             }
             return slideshow;
+        }
+
+        private Color GetColorFromFloats(float[] fracColors)
+        {
+            int[] c = fracColors.Select(x => (int)(x * 255)).ToArray();
+            return Color.FromArgb(c[3], c[0], c[1], c[2]);
+        }
+
+        private float[] GetFourFloats(string remainder)
+        {
+            float[] result = remainder.Split().Select(x => float.Parse(x)).ToArray();
+            if (result.Length != 4) throw new FormatException();
+            return result;
         }
 
         private (string, string) BreakBySpaces(string line)
