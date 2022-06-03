@@ -1,6 +1,9 @@
 ﻿using Prism.Commands;
 using System;
 using System.Drawing;
+using System.IO;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Show
@@ -42,10 +45,29 @@ namespace Show
             RenderSlide();
         }
 
+        const string path = "../../../my.show";
+        FileSystemWatcher watch;
         public SlideShowViewModel(SlideShowItemFactory factory)
         {
             this.factory = factory;
-            SlideshowReader foobar = new SlideshowReader("../../../my.show");
+            SlideshowReader foobar = new SlideshowReader(path);
+            slideshow = foobar.Load();
+            RenderSlide();
+            watch = new FileSystemWatcher();
+            watch.Path = Path.GetDirectoryName(Path.GetFullPath(path));
+            watch.Filter = Path.GetFileName(path);
+            watch.Changed += FileChanged;
+            watch.EnableRaisingEvents = true;
+        }
+
+        private void FileChanged(object sender, FileSystemEventArgs e)
+        {
+            Task.Delay(100).ContinueWith(t => Application.Current.Dispatcher.Invoke(Reload));
+        }
+
+        private void Reload()
+        {
+            SlideshowReader foobar = new SlideshowReader(path);
             slideshow = foobar.Load();
             RenderSlide();
         }
