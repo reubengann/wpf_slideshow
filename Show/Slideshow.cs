@@ -44,6 +44,12 @@ namespace Show
         {
             Text = text;
         }
+
+        public void PushText(string s)
+        {
+            if (string.IsNullOrEmpty(Text)) Text = s;
+            else Text += $"\n{s}";
+        }
     }
 
     class SlideImage : SlideItem

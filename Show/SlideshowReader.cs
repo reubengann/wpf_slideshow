@@ -69,6 +69,19 @@ namespace Show
                             }
                             catch(FormatException e) { Debug.WriteLine("Error on line {0}: Expected floats, but got {1}", i, e.Message); }
                             break;
+                        case "text_color":
+                            try
+                            {
+                                if (CurrentSlide == null)
+                                {
+                                    Debug.WriteLine("Got text color on line {0}, but no slide has been started", i);
+                                    continue;
+                                }
+                                if (CurrentSlide.CurrentSlideText == null)
+                                    CurrentSlide.Add(new SlideText("") { color = GetColorFromFloats(GetFourFloats(remainder)) });
+                            }
+                            catch (FormatException e) { Debug.WriteLine("Error on line {0}: Expected floats, but got {1}", i, e.Message); }
+                            break;
                         default:
                             Debug.WriteLine("***************COMMAND {0}, RHS: {1}", command, remainder);
                             break;
@@ -84,7 +97,7 @@ namespace Show
                             CurrentSlide.Add(new SlideText(line));
                         else
                         {
-                            CurrentSlide.CurrentSlideText.Text += $"\n{line}";
+                            CurrentSlide.CurrentSlideText.PushText(line);
                         }
                     }
                 }
