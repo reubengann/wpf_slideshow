@@ -8,8 +8,10 @@
         Title="MainWindow" Height="450" Width="800" Background="Black"
         d:DataContext="{d:DesignInstance Type=local:SlideShowViewModel, IsDesignTimeCreatable=False}">
     <Window.InputBindings>
-        <KeyBinding Command="{Binding NextSlide}" Key="Next"/>
-        <KeyBinding Command="{Binding PreviousSlide}" Key="PageUp"/>
+        <KeyBinding Command="{Binding LastSlide}" Key="Next"/>
+        <KeyBinding Command="{Binding FirstSlide}" Key="PageUp"/>
+        <KeyBinding Command="{Binding PreviousSlide}" Key="Up"/>
+        <KeyBinding Command="{Binding NextSlide}" Key="Down"/>
     </Window.InputBindings>
     <Window.Resources>
         <local:ColorToSolidColorBrushValueConverter  x:Key="ColorToSolidColorBrush_ValueConverter"/>

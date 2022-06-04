@@ -17,6 +17,8 @@ namespace Show
 
         public ICommand NextSlide => new DelegateCommand(() => CurrentSlideIndex++);
         public ICommand PreviousSlide => new DelegateCommand(() => CurrentSlideIndex--);
+        public ICommand LastSlide => new DelegateCommand(() => CurrentSlideIndex = slideshow.Slides.Count - 1);
+        public ICommand FirstSlide => new DelegateCommand(() => CurrentSlideIndex = 0);
 
         public int CurrentSlideIndex
         {
