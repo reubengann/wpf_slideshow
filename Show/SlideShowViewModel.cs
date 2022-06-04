@@ -69,6 +69,7 @@ namespace Show
         {
             SlideshowReader foobar = new SlideshowReader(path);
             slideshow = foobar.Load();
+            currentSlideIndex = Math.Min(currentSlideIndex, slideshow.Slides.Count - 1);
             RenderSlide();
         }
 
