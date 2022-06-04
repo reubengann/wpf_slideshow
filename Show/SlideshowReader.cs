@@ -77,10 +77,35 @@ namespace Show
                                     Debug.WriteLine("Got text color on line {0}, but no slide has been started", i);
                                     continue;
                                 }
-                                if (CurrentSlide.CurrentSlideText == null)
-                                    CurrentSlide.Add(new SlideText("") { color = GetColorFromFloats(GetFourFloats(remainder)) });
+                                SlideText s = GetOrCreateSlideText(CurrentSlide);
+                                s.color = GetColorFromFloats(GetFourFloats(remainder));
                             }
                             catch (FormatException e) { Debug.WriteLine("Error on line {0}: Expected floats, but got {1}", i, e.Message); }
+                            break;
+                        case "justify":
+                            if (CurrentSlide == null)
+                            {
+                                Debug.WriteLine("Got justification command on line {0}, but no slide has been started", i);
+                                continue;
+                            }
+                            {
+                                SlideText s = GetOrCreateSlideText(CurrentSlide);
+                                switch (remainder)
+                                {
+                                    case "left":
+                                        s.Justification = TextJustification.Left;
+                                        break;
+                                    case "right":
+                                        s.Justification = TextJustification.Right;
+                                        break;
+                                    case "center":
+                                        s.Justification = TextJustification.Center;
+                                        break;
+                                    default:
+                                        Debug.WriteLine("Invalid justification {0} on line {1}. Must be left, right or center.", remainder, i);
+                                        break;
+                                }
+                            }
                             break;
                         default:
                             Debug.WriteLine("***************COMMAND {0}, RHS: {1}", command, remainder);
@@ -103,6 +128,18 @@ namespace Show
                 }
             }
             return slideshow;
+        }
+
+        private static SlideText GetOrCreateSlideText(Slide CurrentSlide)
+        {
+            SlideText s;
+            if (CurrentSlide.CurrentSlideText == null)
+            {
+                s = new SlideText("");
+                CurrentSlide.Add(s);
+            }
+            else s = CurrentSlide.CurrentSlideText;
+            return s;
         }
 
         private Color GetColorFromFloats(float[] fracColors)

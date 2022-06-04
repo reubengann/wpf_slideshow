@@ -69,18 +69,55 @@ namespace Show
             {
                 Text = text.Text,
                 Foreground = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B)),
-                HorizontalAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = JustificationToHorizAlignment(text.Justification),
                 VerticalAlignment = VerticalAlignment.Center,
                 FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,
                 FontSize = 100,
-                TextAlignment=TextAlignment.Center
+                TextAlignment = JustificationToTextAlignment(text.Justification)
             };
             tb.Effect = new DropShadowEffect
             {
                 ShadowDepth = 1
             };
-            tb.Margin = new Thickness(0,  2 * (900 - tb.FontSize) * (0.5 - text.YCoordinate), 0, 0);
+            tb.Margin = GetThickness(text, tb);
             grid.Children.Add(tb);
+        }
+
+        private static Thickness GetThickness(SlideText text, TextBlock tb)
+        {
+
+            Thickness thick = new Thickness(0, 2 * (900 - tb.FontSize) * (0.5 - text.YCoordinate), 0, 0);
+            if(text.Justification == TextJustification.Left)
+            {
+                thick.Left = 200;
+            }
+            else if(text.Justification == TextJustification.Right)
+            {
+                thick.Right = 200;
+            }
+            return thick;
+        }
+
+        static TextAlignment JustificationToTextAlignment(TextJustification j)
+        {
+            switch (j)
+            {
+                case TextJustification.Left: return TextAlignment.Left;
+                case TextJustification.Right: return TextAlignment.Right;
+                case TextJustification.Center: return TextAlignment.Center;
+            }
+            throw new Exception("Unknown justification type");
+        }
+        
+        static HorizontalAlignment JustificationToHorizAlignment(TextJustification j)
+        {
+            switch (j)
+            {
+                case TextJustification.Left: return HorizontalAlignment.Left;
+                case TextJustification.Right: return HorizontalAlignment.Right;
+                case TextJustification.Center: return HorizontalAlignment.Center;
+            }
+            throw new Exception("Unknown justification type");
         }
     }
 
