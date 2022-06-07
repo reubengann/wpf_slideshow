@@ -24,6 +24,7 @@ namespace Show
             string? line;
             Slide? CurrentSlide = null;
             int i = 0;
+            SlideText? t = null;
             while ((line = sr.ReadLine()) != null)
             {
                 i++;
@@ -57,28 +58,30 @@ namespace Show
                             }
                             break;
                         case "y":
-                            try 
-                            {
                                 if (CurrentSlide == null)
                                 {
                                     Debug.WriteLine("Got text y coordinate on line {0}, but no slide has been started", i);
                                     continue;
                                 }
-                                if (CurrentSlide.CurrentSlideText == null)
-                                    CurrentSlide.Add(new SlideText("") { YCoordinate = float.Parse(remainder) });
+                                if (t == null)
+                                    t = new SlideText("");
+                            try 
+                            {
+                                t.YCoordinate = float.Parse(remainder);
                             }
                             catch(FormatException e) { Debug.WriteLine("Error on line {0}: Expected floats, but got {1}", i, e.Message); }
                             break;
                         case "text_color":
-                            try
-                            {
                                 if (CurrentSlide == null)
                                 {
                                     Debug.WriteLine("Got text color on line {0}, but no slide has been started", i);
                                     continue;
                                 }
-                                SlideText s = GetOrCreateSlideText(CurrentSlide);
-                                s.color = GetColorFromFloats(GetFourFloats(remainder));
+                                if (t == null)
+                                    t = new SlideText("");
+                            try
+                            {
+                                t.color = GetColorFromFloats(GetFourFloats(remainder));
                             }
                             catch (FormatException e) { Debug.WriteLine("Error on line {0}: Expected floats, but got {1}", i, e.Message); }
                             break;
@@ -88,23 +91,39 @@ namespace Show
                                 Debug.WriteLine("Got justification command on line {0}, but no slide has been started", i);
                                 continue;
                             }
+                            if (t == null)
+                                t = new SlideText("");
+                            switch (remainder)
                             {
-                                SlideText s = GetOrCreateSlideText(CurrentSlide);
-                                switch (remainder)
-                                {
-                                    case "left":
-                                        s.Justification = TextJustification.Left;
-                                        break;
-                                    case "right":
-                                        s.Justification = TextJustification.Right;
-                                        break;
-                                    case "center":
-                                        s.Justification = TextJustification.Center;
-                                        break;
-                                    default:
-                                        Debug.WriteLine("Invalid justification {0} on line {1}. Must be left, right or center.", remainder, i);
-                                        break;
-                                }
+                                case "left":
+                                    t.Justification = TextJustification.Left;
+                                    break;
+                                case "right":
+                                    t.Justification = TextJustification.Right;
+                                    break;
+                                case "center":
+                                    t.Justification = TextJustification.Center;
+                                    break;
+                                default:
+                                    Debug.WriteLine("Invalid justification {0} on line {1}. Must be left, right or center.", remainder, i);
+                                    break;
+                            }
+                            
+                            break;
+                        case "size":
+                            if (CurrentSlide == null)
+                            {
+                                Debug.WriteLine("Got size command on line {0}, but no slide has been started", i);
+                                continue;
+                            }
+                            if (t == null)
+                                t = new SlideText("");
+                            try
+                            {
+                                t.FontSize = float.Parse(remainder);
+                            }
+                            catch (FormatException e) { 
+                                    Debug.WriteLine("Invalid size {0} on line {1}. Must be a float", remainder, i);
                             }
                             break;
                         default:
@@ -119,7 +138,11 @@ namespace Show
                     else
                     {
                         if(CurrentSlide.CurrentSlideText == null)
-                            CurrentSlide.Add(new SlideText(line));
+                        {
+                            t.Text = line;
+                            CurrentSlide.Add(t);
+                            t = new SlideText("");
+                        }
                         else
                         {
                             CurrentSlide.CurrentSlideText.PushText(line);
@@ -130,17 +153,6 @@ namespace Show
             return slideshow;
         }
 
-        private static SlideText GetOrCreateSlideText(Slide CurrentSlide)
-        {
-            SlideText s;
-            if (CurrentSlide.CurrentSlideText == null)
-            {
-                s = new SlideText("");
-                CurrentSlide.Add(s);
-            }
-            else s = CurrentSlide.CurrentSlideText;
-            return s;
-        }
 
         private Color GetColorFromFloats(float[] fracColors)
         {

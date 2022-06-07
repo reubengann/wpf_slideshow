@@ -17,6 +17,7 @@ There are 69,105 leaves in the pile.
 : background .03 .06 .5 1
 : text_color 1 1 0 1
 : y 0.8
+: justify left
 Unfortunately, there's a radio
 connected to my brain
 
@@ -24,6 +25,7 @@ connected to my brain
 # ------------------------------------------------
 : slide
 : background .4 .03 .5 1
+: size 16
 That's it
 
 # ------------------------------------------------

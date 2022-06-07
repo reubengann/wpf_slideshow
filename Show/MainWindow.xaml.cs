@@ -72,7 +72,7 @@ namespace Show
                 HorizontalAlignment = JustificationToHorizAlignment(text.Justification),
                 VerticalAlignment = VerticalAlignment.Center,
                 FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,
-                FontSize = 100,
+                FontSize = 10 * text.FontSize,
                 TextAlignment = JustificationToTextAlignment(text.Justification)
             };
             tb.Effect = new DropShadowEffect

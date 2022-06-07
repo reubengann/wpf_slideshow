@@ -39,6 +39,7 @@ namespace Show
         public string Text;
         public Color color = Color.White;
         public float YCoordinate = 0.5f;
+        public float FontSize = 10f;
         public TextJustification Justification = TextJustification.Center;
 
 
