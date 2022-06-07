@@ -1,5 +1,7 @@
 # : define_style title WhateverFontName 37   color .5 .03 .06 1
 
+: declare_font main_font OpenSans-Regular.ttf
+
 # ------------------------------------------------
 : slide
 : background .5 .03 .06 1

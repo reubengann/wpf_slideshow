@@ -43,6 +43,9 @@ namespace Show
         public WPFSlideShowFactory(Grid mainGrid)
         {
             grid = mainGrid;
+            var app = new Uri(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            var uri = new Uri(app, "./Fonts/Karmina Bold Italic.otf");
+            FontLibrary.Instance.Add("karmina", uri, "Karmina");
         }
 
         
@@ -71,7 +74,8 @@ namespace Show
                 Foreground = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B)),
                 HorizontalAlignment = JustificationToHorizAlignment(text.Justification),
                 VerticalAlignment = VerticalAlignment.Center,
-                FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,
+                //FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,
+                FontFamily = FontLibrary.Instance.Get("karmina"),
                 FontSize = 10 * text.FontSize,
                 TextAlignment = JustificationToTextAlignment(text.Justification)
             };
