@@ -45,7 +45,7 @@ namespace Show
             grid = mainGrid;
             var app = new Uri(System.Reflection.Assembly.GetExecutingAssembly().Location);
             var uri = new Uri(app, "./Fonts/Karmina Bold Italic.otf");
-            FontLibrary.Instance.Add("karmina", uri, "Karmina");
+            FontLibrary.Instance.Add("karmina", uri);
         }
 
         
@@ -75,7 +75,7 @@ namespace Show
                 HorizontalAlignment = JustificationToHorizAlignment(text.Justification),
                 VerticalAlignment = VerticalAlignment.Center,
                 //FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,
-                FontFamily = FontLibrary.Instance.Get("karmina"),
+                FontFamily = FontLibrary.Instance.Get(text.FontName),
                 FontSize = 10 * text.FontSize,
                 TextAlignment = JustificationToTextAlignment(text.Justification)
             };

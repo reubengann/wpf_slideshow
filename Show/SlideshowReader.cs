@@ -109,6 +109,26 @@ namespace Show
                                     Debug.WriteLine("Invalid size {0} on line {1}. Must be a float", remainder, i);
                             }
                             break;
+                        case "declare_font":
+                            var (fontName, fontFile) = BreakBySpaces(remainder);
+                            var app = new Uri(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                            var uri = new Uri(app, $"./Fonts/{fontFile}");
+                            try
+                            {
+                                FontLibrary.Instance.Add(fontName, uri);
+                            }
+                            catch (FileNotFoundException e) { Debug.WriteLine("Error loading {0}. Was it declared?", fontName); }
+                            break;
+                        case "font":
+                            if (CurrentSlide == null) { PrintNoSlideError("font", i); continue; }
+                            if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
+                            if (!FontLibrary.Instance.HasFont(remainder))
+                            {
+                                Debug.WriteLine("Could not find font {0}", remainder);
+                                continue;
+                            }
+                            t.FontName = remainder;
+                            break;
                         default:
                             Debug.WriteLine("***************COMMAND {0}, RHS: {1}", command, remainder);
                             break;

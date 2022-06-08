@@ -41,6 +41,7 @@ namespace Show
         public float YCoordinate = 0.5f;
         public float FontSize = 10f;
         public TextJustification Justification = TextJustification.Center;
+        public string FontName = "karmina";
 
 
         public SlideText(string text)
