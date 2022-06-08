@@ -54,27 +54,41 @@ namespace Show
         {
             this.factory = factory;
             SlideshowReader foobar = new SlideshowReader(path);
+            Log = log;
+            foobar.OnLog += LogMessage;
             slideshow = foobar.Load();
+            foobar.OnLog -= LogMessage;
             RenderSlide();
             watch = new FileSystemWatcher();
             watch.Path = Path.GetDirectoryName(Path.GetFullPath(path));
             watch.Filter = Path.GetFileName(path);
             watch.Changed += FileChanged;
+            watch.NotifyFilter = NotifyFilters.LastWrite;
             watch.EnableRaisingEvents = true;
-            Log = log;
+        }
+        private void LogMessage(string s)
+        {
+            Log?.Invoke(s);
         }
 
+        private bool HandlingNow = false;
         private void FileChanged(object sender, FileSystemEventArgs e)
         {
+            if (HandlingNow) return;
+            HandlingNow = true;
             Task.Delay(100).ContinueWith(t => Application.Current.Dispatcher.Invoke(Reload));
         }
 
         private void Reload()
         {
+            LogMessage("Detected file changes. Reloading");
             SlideshowReader foobar = new SlideshowReader(path);
+            foobar.OnLog += LogMessage;
             slideshow = foobar.Load();
+            foobar.OnLog -= LogMessage;
             currentSlideIndex = Math.Min(currentSlideIndex, slideshow.Slides.Count - 1);
             RenderSlide();
+            HandlingNow = false;
         }
 
         public void RenderSlide()
@@ -82,7 +96,6 @@ namespace Show
             Slide slide = slideshow.Slides[currentSlideIndex];
             CurrentBackgroundColor = slide.BackgroundColor;
             factory.RenderSlide(slide);
-            Log?.Invoke("loaded slide");
         }
     }
 }

@@ -12,13 +12,21 @@ namespace Show
     public class SlideshowReader
     {
         private readonly string path;
+        public Action<string>? OnLog;
 
         public SlideshowReader(string path)
         {
             this.path = path;
         }
+
+        private void Log(string s)
+        {
+            OnLog?.Invoke(s);
+        }
+
         public Slideshow Load()
         {
+            Log($"Loading file {path}");
             using StreamReader sr = new StreamReader(path);
             Slideshow slideshow = new Slideshow();
             string? line;
@@ -36,7 +44,7 @@ namespace Show
                     switch(command)
                     {
                         case "slide":
-                            if (!string.IsNullOrWhiteSpace(remainder)) Debug.WriteLine("Error: Junk after slide on line {0}", i);
+                            if (!string.IsNullOrWhiteSpace(remainder)) Log($"Error: Junk after slide on line {i}");
                             CurrentSlide = new Slide();
                             slideshow.Slides.Add(CurrentSlide);
                             break;
@@ -50,7 +58,7 @@ namespace Show
                             }
                             catch(FormatException e) 
                             {
-                                Debug.WriteLine("Error on line {0}: Expected four floats in background color, but got {1}", i, e.Message);
+                                Log($"Error on line {i}: Expected four floats in background color, but got {e.Message}");
                             }
                             break;
                         case "y":
@@ -60,7 +68,7 @@ namespace Show
                             {
                                 t.YCoordinate = float.Parse(remainder);
                             }
-                            catch(FormatException e) { Debug.WriteLine("Error on line {0}: Expected floats, but got {1}", i, e.Message); }
+                            catch(FormatException e) { Log($"Error on line {i} while parsing y coordinate: Expected float, but got {e.Message}"); }
                             break;
                         case "text_color":
                             if (CurrentSlide == null) { PrintNoSlideError("text color", i); continue; }
@@ -69,7 +77,7 @@ namespace Show
                             {
                                 t.color = GetColorFromFloats(GetFourFloats(remainder));
                             }
-                            catch (FormatException e) { Debug.WriteLine("Error on line {0}: Expected floats, but got {1}", i, e.Message); }
+                            catch (FormatException e) { Log($"Error on line {i} while parsing text color: Expected floats, but got {e.Message}"); }
                             break;
                         case "justify":
                             if (CurrentSlide == null) { PrintNoSlideError("justification", i); continue; }
@@ -86,7 +94,7 @@ namespace Show
                                     t.Justification = TextJustification.Center;
                                     break;
                                 default:
-                                    Debug.WriteLine("Invalid justification {0} on line {1}. Must be left, right or center.", remainder, i);
+                                    Log($"Invalid justification {remainder} on line {i}. Must be left, right or center.");
                                     break;
                             }
                             
@@ -99,15 +107,13 @@ namespace Show
                                 float f = float.Parse(remainder);
                                 if (f < 0)
                                 {
-                                    Debug.WriteLine("Got invalid size {1} line {0}. Size must be positive.", i, f);
+                                    Log($"Got invalid size {f} line {i}. Size must be positive.");
                                     continue;
                                 }
 
                                 t.FontSize = f;
                             }
-                            catch (FormatException e) { 
-                                    Debug.WriteLine("Invalid size {0} on line {1}. Must be a float", remainder, i);
-                            }
+                            catch (FormatException e) { Log($"Invalid size {remainder} on line {i}. Must be a float"); }
                             break;
                         case "declare_font":
                             var (fontName, fontFile) = BreakBySpaces(remainder);
@@ -117,27 +123,27 @@ namespace Show
                             {
                                 FontLibrary.Instance.Add(fontName, uri);
                             }
-                            catch (FileNotFoundException e) { Debug.WriteLine("Error loading {0}. Was it declared?", fontName); }
+                            catch (FileNotFoundException e) { Log($"Error loading {fontName} from {fontFile}: file not found."); }
                             break;
                         case "font":
                             if (CurrentSlide == null) { PrintNoSlideError("font", i); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             if (!FontLibrary.Instance.HasFont(remainder))
                             {
-                                Debug.WriteLine("Could not find font {0}", remainder);
+                                Log($"Could not find font {remainder}. Was it declared?");
                                 continue;
                             }
                             t.FontName = remainder;
                             break;
                         default:
-                            Debug.WriteLine("***************COMMAND {0}, RHS: {1}", command, remainder);
+                            Log($"***************COMMAND {command}, RHS: {remainder}");
                             break;
                     }
                 }
                 else //text
                 {
                     if(CurrentSlide == null)
-                        Debug.WriteLine("Got text on line {0}, but no slide has been started", i);
+                        Log($"Got text on line {i}, but no slide has been started");
                     else
                     {
                         if(CurrentSlide.CurrentSlideText == null)
@@ -158,7 +164,7 @@ namespace Show
 
         private void PrintNoSlideError(string command, int line)
         {
-            Debug.WriteLine("Got {1} on line {0}, but no slide has been started", line, command);
+            Log($"Got {command} on line {line}, but no slide has been started");
         }
 
         private Color GetColorFromFloats(float[] fracColors)
