@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Show"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Background="Black"
-        d:DataContext="{d:DesignInstance Type=local:SlideShowViewModel, IsDesignTimeCreatable=False}">
+        d:DataContext="{d:DesignInstance Type=local:SlideShowViewModel, IsDesignTimeCreatable=False}"
+        Closed="Window_Closed" Loaded="Window_Loaded">
     <Window.InputBindings>
         <KeyBinding Command="{Binding LastSlide}" Key="Next"/>
         <KeyBinding Command="{Binding FirstSlide}" Key="PageUp"/>

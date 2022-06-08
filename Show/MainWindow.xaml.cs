@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -22,11 +23,29 @@ namespace Show
     /// </summary>
     public partial class MainWindow : Window
     {
+        DebugViewModel debugViewModel;
+        DebugWindow debugWindow;
         public MainWindow()
         {
             InitializeComponent();
             WPFSlideShowFactory factory = new WPFSlideShowFactory(MainGrid);
-            DataContext = new SlideShowViewModel(factory);
+            debugViewModel = new DebugViewModel();
+            debugWindow = new DebugWindow();
+            debugWindow.DataContext = debugViewModel;
+            
+            DataContext = new SlideShowViewModel(factory, (string s) => debugViewModel.Text += $"{s}\n");
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            debugWindow.Close();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            debugWindow.Left = this.Left;
+            debugWindow.Top = this.Top + this.Height;
+            debugWindow.Show();
         }
     }
 

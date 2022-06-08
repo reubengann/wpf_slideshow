@@ -49,7 +49,8 @@ namespace Show
 
         const string path = "../../../my.show";
         FileSystemWatcher watch;
-        public SlideShowViewModel(SlideShowItemFactory factory)
+        Action<string>? Log;
+        public SlideShowViewModel(SlideShowItemFactory factory, Action<string>? log = null)
         {
             this.factory = factory;
             SlideshowReader foobar = new SlideshowReader(path);
@@ -60,6 +61,7 @@ namespace Show
             watch.Filter = Path.GetFileName(path);
             watch.Changed += FileChanged;
             watch.EnableRaisingEvents = true;
+            Log = log;
         }
 
         private void FileChanged(object sender, FileSystemEventArgs e)
@@ -80,6 +82,7 @@ namespace Show
             Slide slide = slideshow.Slides[currentSlideIndex];
             CurrentBackgroundColor = slide.BackgroundColor;
             factory.RenderSlide(slide);
+            Log?.Invoke("loaded slide");
         }
     }
 }
