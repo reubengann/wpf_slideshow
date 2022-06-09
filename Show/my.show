@@ -9,6 +9,13 @@
 :    justify right
 : end_style
 
+: slide Template no
+: background .03 .06 .5 1
+: text_color 1 1 0 1
+: y 0.8
+: justify left
+Unfortunately, there's a radio
+
 # ------------------------------------------------
 : slide
 : style my_style
@@ -44,5 +51,5 @@ That's it
 
 # ------------------------------------------------
 : slide
-: background .14 .83 .5 1
+: use_slide Template
 No, that wasn't it!!!

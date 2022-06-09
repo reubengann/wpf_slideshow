@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Show
@@ -26,6 +27,12 @@ namespace Show
         {
             if (item is SlideText) CurrentSlideText = item as SlideText;
             Items.Add(item);
+        }
+
+        public void CopyTemplate(Slide other)
+        {
+            this.BackgroundColor = other.BackgroundColor;
+            this.Items = new List<SlideItem>(other.Items);
         }
     }
 

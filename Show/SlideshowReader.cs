@@ -36,6 +36,7 @@ namespace Show
             bool continuingText = false;
             string definingStyleName = "";
             Dictionary<string, SlideText> styles = new();
+            Dictionary<string, Slide> templates = new();
             while ((line = sr.ReadLine()) != null)
             {
                 i++;
@@ -47,9 +48,37 @@ namespace Show
                     switch (command)
                     {
                         case "slide":
-                            if (!string.IsNullOrWhiteSpace(remainder)) Log($"Error: Junk after slide on line {i}");
+                            if(!string.IsNullOrEmpty(definingStyleName))
+                            {
+                                Log($"Error on line {i}: Attempt to declare slide while defining style {definingStyleName}.");
+                                definingStyleName = "";
+                            }
+                            string slideName = "";
+                            bool visible = true;
+                            if (!string.IsNullOrEmpty(remainder))
+                            {
+                                var (attemptedslideName, visibilityName) = BreakBySpaces(remainder);
+                                switch(visibilityName)
+                                {
+                                    case "yes": visible = true; break;
+                                    case "no": visible = false; break;
+                                    case "": visible = true; break;
+                                    default: 
+                                        Log($"Error on line {i}: Invalid visibility {visibilityName} (must be yes or no or leaving it blank)");
+                                        break;
+                                }
+                                if(templates.ContainsKey(attemptedslideName))
+                                {
+                                    Log($"Error on line {i}: attempt to redefine slide {attemptedslideName}");
+                                    continue;
+                                }
+                                slideName = attemptedslideName;
+                            }
                             CurrentSlide = new Slide();
-                            slideshow.Slides.Add(CurrentSlide);
+                            if(visible)
+                                slideshow.Slides.Add(CurrentSlide);
+                            if (!string.IsNullOrEmpty(slideName))
+                                templates[slideName] = CurrentSlide;
                             t = new SlideText("");
                             break;
                         case "background":
@@ -173,6 +202,14 @@ namespace Show
                                 continue;
                             }
                             t = new SlideText(styles[remainder]);
+                            break;
+                        case "use_slide":
+                            if(!templates.ContainsKey(remainder))
+                            {
+                                Log($"Error on line {i}: attempt to use undefined slide template {remainder}");
+                                continue;
+                            }
+                            CurrentSlide?.CopyTemplate(templates[remainder]);
                             break;
                         default:
                             Log($"***************COMMAND {command}, RHS: {remainder}");
