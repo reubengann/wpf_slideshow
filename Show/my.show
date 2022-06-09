@@ -1,19 +1,25 @@
-# : define_style title WhateverFontName 37   color .5 .03 .06 1
-
 : declare_font sans OpenSans-Regular.ttf
 : declare_font main Karmina Bold Italic.otf
 
+: begin_style my_style
+:    size 12
+:    font sans
+:    text_color 1 0 0 1
+:    y 0.7
+:    justify right
+: end_style
+
 # ------------------------------------------------
 : slide
-: background .5 .03 .06 1
-: justify left
+: style my_style
+: size 6
 Hello, Sailor!
 
 # ------------------------------------------------
 : slide
 : background .03 .5 .06 1
 : text_color 0 0 0 1
-: font sans
+: font main
 : size 8
 There are 69,105 leaves in the pile.
 

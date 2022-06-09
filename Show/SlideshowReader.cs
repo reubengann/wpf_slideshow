@@ -34,6 +34,8 @@ namespace Show
             int i = 0;
             SlideText t = new SlideText("");
             bool continuingText = false;
+            string definingStyleName = "";
+            Dictionary<string, SlideText> styles = new();
             while ((line = sr.ReadLine()) != null)
             {
                 i++;
@@ -42,7 +44,7 @@ namespace Show
                 {
                     line = line[1..].TrimStart();
                     var (command, remainder) = BreakBySpaces(line);
-                    switch(command)
+                    switch (command)
                     {
                         case "slide":
                             if (!string.IsNullOrWhiteSpace(remainder)) Log($"Error: Junk after slide on line {i}");
@@ -58,23 +60,23 @@ namespace Show
                                 Color background = GetColorFromFloats(FracColors);
                                 CurrentSlide.BackgroundColor = background;
                             }
-                            catch(FormatException e) 
+                            catch (FormatException e)
                             {
                                 Log($"Error on line {i}: Expected four floats in background color, but got {e.Message}");
                             }
                             break;
                         case "y":
-                            if (CurrentSlide == null) { PrintNoSlideError("text y coordinate", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("text y coordinate", i); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             try
                             {
                                 t.YCoordinate = float.Parse(remainder);
                             }
-                            catch(FormatException e) { Log($"Error on line {i} while parsing y coordinate: Expected float, but got {e.Message}"); }
+                            catch (FormatException e) { Log($"Error on line {i} while parsing y coordinate: Expected float, but got {e.Message}"); }
                             continuingText = false;
                             break;
                         case "text_color":
-                            if (CurrentSlide == null) { PrintNoSlideError("text color", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("text color", i); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             try
                             {
@@ -84,7 +86,7 @@ namespace Show
                             continuingText = false;
                             break;
                         case "justify":
-                            if (CurrentSlide == null) { PrintNoSlideError("justification", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("justification", i); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             switch (remainder)
                             {
@@ -104,7 +106,7 @@ namespace Show
                             continuingText = false;
                             break;
                         case "size":
-                            if (CurrentSlide == null) { PrintNoSlideError("size", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("size", i); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             try
                             {
@@ -131,7 +133,7 @@ namespace Show
                             catch (FileNotFoundException e) { Log($"Error loading {fontName} from {fontFile}: file not found."); }
                             break;
                         case "font":
-                            if (CurrentSlide == null) { PrintNoSlideError("font", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("font", i); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             if (!FontLibrary.Instance.HasFont(remainder))
                             {
@@ -140,6 +142,37 @@ namespace Show
                             }
                             t.FontName = remainder;
                             continuingText = false;
+                            break;
+                        case "begin_style":
+                            if (!string.IsNullOrEmpty(definingStyleName))
+                            { 
+                                Log($"Error on line {i}: attempt to define a new style, but we are already defining style {definingStyleName}");
+                                continue;
+                            }
+                            if(styles.ContainsKey(remainder))
+                            {
+                                Log($"Attempt to redefine style {remainder}");
+                                continue;
+                            }
+                            definingStyleName = remainder;
+                            break;
+                        case "end_style":
+                            if (string.IsNullOrEmpty(definingStyleName))
+                            {
+                                Log($"Error on line {i}: attempt to end a style, but we are not defining one.");
+                                continue;
+                            }
+                            styles[definingStyleName] = t;
+                            t = new SlideText("");
+                            definingStyleName = "";
+                            break;
+                        case "style":
+                            if(!styles.ContainsKey(remainder))
+                            {
+                                Log($"Error on line {i}: undefined style {remainder}");
+                                continue;
+                            }
+                            t = new SlideText(styles[remainder]);
                             break;
                         default:
                             Log($"***************COMMAND {command}, RHS: {remainder}");
