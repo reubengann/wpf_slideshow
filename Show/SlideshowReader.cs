@@ -33,6 +33,7 @@ namespace Show
             Slide? CurrentSlide = null;
             int i = 0;
             SlideText t = new SlideText("");
+            bool continuingText = false;
             while ((line = sr.ReadLine()) != null)
             {
                 i++;
@@ -69,6 +70,7 @@ namespace Show
                                 t.YCoordinate = float.Parse(remainder);
                             }
                             catch(FormatException e) { Log($"Error on line {i} while parsing y coordinate: Expected float, but got {e.Message}"); }
+                            continuingText = false;
                             break;
                         case "text_color":
                             if (CurrentSlide == null) { PrintNoSlideError("text color", i); continue; }
@@ -78,6 +80,7 @@ namespace Show
                                 t.color = GetColorFromFloats(GetFourFloats(remainder));
                             }
                             catch (FormatException e) { Log($"Error on line {i} while parsing text color: Expected floats, but got {e.Message}"); }
+                            continuingText = false;
                             break;
                         case "justify":
                             if (CurrentSlide == null) { PrintNoSlideError("justification", i); continue; }
@@ -97,7 +100,7 @@ namespace Show
                                     Log($"Invalid justification {remainder} on line {i}. Must be left, right or center.");
                                     break;
                             }
-                            
+                            continuingText = false;
                             break;
                         case "size":
                             if (CurrentSlide == null) { PrintNoSlideError("size", i); continue; }
@@ -114,6 +117,7 @@ namespace Show
                                 t.FontSize = f;
                             }
                             catch (FormatException e) { Log($"Invalid size {remainder} on line {i}. Must be a float"); }
+                            continuingText = false;
                             break;
                         case "declare_font":
                             var (fontName, fontFile) = BreakBySpaces(remainder);
@@ -134,6 +138,7 @@ namespace Show
                                 continue;
                             }
                             t.FontName = remainder;
+                            continuingText = false;
                             break;
                         default:
                             Log($"***************COMMAND {command}, RHS: {remainder}");
@@ -146,11 +151,12 @@ namespace Show
                         Log($"Got text on line {i}, but no slide has been started");
                     else
                     {
-                        if(CurrentSlide.CurrentSlideText == null)
+                        if(CurrentSlide.CurrentSlideText == null || !continuingText)
                         {
                             t.Text = line;
                             CurrentSlide.Add(t);
                             t = new SlideText("");
+                            continuingText = true;
                         }
                         else
                         {

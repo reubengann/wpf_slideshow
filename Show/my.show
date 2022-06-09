@@ -1,6 +1,7 @@
 # : define_style title WhateverFontName 37   color .5 .03 .06 1
 
 : declare_font sans OpenSans-Regular.ttf
+: declare_font main Karmina Bold Italic.otf
 
 # ------------------------------------------------
 : slide
@@ -23,6 +24,7 @@ There are 69,105 leaves in the pile.
 : y 0.8
 : justify left
 Unfortunately, there's a radio
+: font sans
 connected to my brain
 
 
