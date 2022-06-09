@@ -48,6 +48,7 @@ namespace Show
                             if (!string.IsNullOrWhiteSpace(remainder)) Log($"Error: Junk after slide on line {i}");
                             CurrentSlide = new Slide();
                             slideshow.Slides.Add(CurrentSlide);
+                            t = new SlideText("");
                             break;
                         case "background":
                             if (CurrentSlide == null) { PrintNoSlideError("backgound color", i); continue; };
@@ -155,7 +156,7 @@ namespace Show
                         {
                             t.Text = line;
                             CurrentSlide.Add(t);
-                            t = new SlideText("");
+                            t = new SlideText(t) { Text = ""};
                             continuingText = true;
                         }
                         else

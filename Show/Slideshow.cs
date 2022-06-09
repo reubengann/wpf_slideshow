@@ -49,6 +49,16 @@ namespace Show
             Text = text;
         }
 
+        public SlideText(SlideText t)
+        {
+            this.Text = t.Text;
+            this.color = t.color;
+            this.YCoordinate = t.YCoordinate;
+            this.FontSize = t.FontSize;
+            this.Justification = t.Justification;
+            this.FontName = t.FontName;
+        }
+
         public void PushText(string s)
         {
             if (string.IsNullOrEmpty(Text)) Text = s;

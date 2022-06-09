@@ -24,7 +24,9 @@ There are 69,105 leaves in the pile.
 : y 0.8
 : justify left
 Unfortunately, there's a radio
+: y 0.6
 : font sans
+: justify right
 connected to my brain
 
 
