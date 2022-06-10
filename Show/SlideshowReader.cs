@@ -233,6 +233,9 @@ namespace Show
                                 Log($"Error on line {i}: Expected float in left margin, but got {e.Message}");
                             }
                             break;
+                        case "blank":
+                            CurrentSlide?.CurrentSlideText?.PushText("\n");
+                            break;
                         default:
                             Log($"***************COMMAND {command}, RHS: {remainder}");
                             break;

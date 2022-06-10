@@ -46,6 +46,9 @@ III. The Third, and Final, Section
 : style my_style
 : size 6
 Hello, Sailor!
+This is a many-line text input
+: blank
+There is a blank line above me.
 
 # ------------------------------------------------
 : slide
