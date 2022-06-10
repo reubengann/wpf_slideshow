@@ -47,7 +47,7 @@ namespace Show
             RenderSlide();
         }
 
-        const string path = "../../../my.show";
+        const string path = "../../../../SampleShow/my.show";
         FileSystemWatcher watch;
         Action<string>? Log;
         public SlideShowViewModel(SlideShowItemFactory factory, Action<string>? log = null)
