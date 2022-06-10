@@ -9,13 +9,22 @@
 :    justify right
 : end_style
 
+: slide Tiny no
+: justify left
+: y 0.92
+: size 4
+: text_color 1 1 1 .25
+This text is tiny.
 
 : slide Section_1 no
+: use_slide Tiny
 : y .85
+: right_margin 0.04
 : text_color 1 1 1 .25
 : justify right
 : size 7
 I. The First Section
+: right_margin 0.1
 
 : slide Section_2 no
 : text_color 1 1 1 .25

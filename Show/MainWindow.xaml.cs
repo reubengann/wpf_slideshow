@@ -102,21 +102,22 @@ namespace Show
             {
                 ShadowDepth = 1
             };
-            tb.Margin = GetThickness(text, tb);
+            tb.Margin = GetMargins(text, tb);
             grid.Children.Add(tb);
         }
 
-        private static Thickness GetThickness(SlideText text, TextBlock tb)
+        private static Thickness GetMargins(SlideText text, TextBlock tb)
         {
 
-            Thickness thick = new Thickness(0, 2 * (900 - tb.FontSize) * (0.5 - text.YCoordinate), 0, 0);
-            if(text.Justification == TextJustification.Left)
+            Thickness thick = new Thickness(0);
+            thick.Top = 2 * (900 - tb.FontSize) * (0.5 - text.YCoordinate);
+            if (text.Justification == TextJustification.Left)
             {
-                thick.Left = 200;
+                thick.Left = 1600 * text.LeftMargin;
             }
             else if(text.Justification == TextJustification.Right)
             {
-                thick.Right = 200;
+                thick.Right = 1600 * text.RightMargin;
             }
             return thick;
         }

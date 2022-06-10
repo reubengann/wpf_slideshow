@@ -211,6 +211,28 @@ namespace Show
                             }
                             CurrentSlide?.CopyTemplate(templates[remainder]);
                             break;
+                        case "right_margin":
+                            if (CurrentSlide == null) { PrintNoSlideError("right margin", i); continue; };
+                            try
+                            {
+                                CurrentSlide.RightMargin = float.Parse(remainder);
+                            }
+                            catch (FormatException e)
+                            {
+                                Log($"Error on line {i}: Expected float in right margin, but got {e.Message}");
+                            }
+                            break;
+                        case "left_margin":
+                            if (CurrentSlide == null) { PrintNoSlideError("left margin", i); continue; };
+                            try
+                            {
+                                CurrentSlide.LeftMargin = float.Parse(remainder);
+                            }
+                            catch (FormatException e)
+                            {
+                                Log($"Error on line {i}: Expected float in left margin, but got {e.Message}");
+                            }
+                            break;
                         default:
                             Log($"***************COMMAND {command}, RHS: {remainder}");
                             break;

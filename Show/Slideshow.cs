@@ -18,6 +18,9 @@ namespace Show
         public Color BackgroundColor = Color.Black;
         public List<SlideItem> Items { get; private set; }
         public SlideText? CurrentSlideText { get; private set; } = null;
+        public float RightMargin = 0.2f;
+        public float LeftMargin = 0.2f;
+        
         public Slide()
         {
             Items = new List<SlideItem>();
@@ -25,14 +28,21 @@ namespace Show
 
         public void Add(SlideItem item)
         {
-            if (item is SlideText) CurrentSlideText = item as SlideText;
-            Items.Add(item);
+            if (item is SlideText)
+            {
+                CurrentSlideText = item as SlideText;
+                CurrentSlideText.LeftMargin = LeftMargin;
+                CurrentSlideText.RightMargin = RightMargin;
+                Items.Add(item);
+            }
         }
 
         public void CopyTemplate(Slide other)
         {
             this.BackgroundColor = other.BackgroundColor;
             this.Items = new List<SlideItem>(other.Items);
+            this.LeftMargin = other.LeftMargin;
+            this.RightMargin = other.RightMargin;
         }
     }
 
@@ -49,6 +59,8 @@ namespace Show
         public float FontSize = 10f;
         public TextJustification Justification = TextJustification.Center;
         public string FontName = "karmina";
+        public float RightMargin = 0.2f;
+        public float LeftMargin = 0.2f;
 
 
         public SlideText(string text)
