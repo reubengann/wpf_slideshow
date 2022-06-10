@@ -9,21 +9,38 @@
 :    justify right
 : end_style
 
-: slide Template no
-: background .03 .06 .5 1
-: text_color 1 1 0 1
-: y 0.8
-: justify left
-Unfortunately, there's a radio
+
+: slide Section_1 no
+: y .85
+: text_color 1 1 1 .25
+: justify right
+: size 7
+I. The First Section
+
+: slide Section_2 no
+: text_color 1 1 1 .25
+: y .85
+: justify right
+: size 7
+II. The Second Section
+
+: slide Section_3 no
+: text_color 1 1 1 .25
+: y .85
+: justify right
+: size 7
+III. The Third, and Final, Section
 
 # ------------------------------------------------
 : slide
+: use_slide Section_1
 : style my_style
 : size 6
 Hello, Sailor!
 
 # ------------------------------------------------
 : slide
+: use_slide Section_1
 : background .03 .5 .06 1
 : text_color 0 0 0 1
 : font main
@@ -32,6 +49,7 @@ There are 69,105 leaves in the pile.
 
 # ------------------------------------------------
 : slide
+: use_slide Section_2
 : background .03 .06 .5 1
 : text_color 1 1 0 1
 : y 0.8
@@ -45,11 +63,12 @@ connected to my brain
 
 # ------------------------------------------------
 : slide
+: use_slide Section_2
 : background .4 .03 .5 1
 : size 16
 That's it
 
 # ------------------------------------------------
 : slide
-: use_slide Template
+: use_slide Section_3
 No, that wasn't it!!!
