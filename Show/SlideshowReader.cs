@@ -151,7 +151,7 @@ namespace Show
 
                                 t.FontSize = f;
                             }
-                            catch (FormatException e) { Log($"Invalid size {remainder} on line {i}. Must be a float"); }
+                            catch (FormatException) { Log($"Invalid size {remainder} on line {i}. Must be a float"); }
                             continuingText = false;
                             break;
                         case "declare_font":
@@ -162,7 +162,7 @@ namespace Show
                             {
                                 FontLibrary.Instance.Add(fontName, uri);
                             }
-                            catch (FileNotFoundException e) { Log($"Error loading {fontName} from {fontFile}: file not found."); }
+                            catch (FileNotFoundException) { Log($"Error loading {fontName} from {fontFile}: file not found."); }
                             break;
                         case "font":
                             if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("font", i); continue; }
@@ -247,7 +247,10 @@ namespace Show
                             }
                             try
                             {
-                                var imagePath = GetAnImageWithBasename(basename, Path.GetDirectoryName(path));
+                                string? folder = Path.GetDirectoryName(path);
+                                if (folder == null)
+                                    throw new Exception("Could not get dirname");
+                                var imagePath = GetAnImageWithBasename(basename, folder);
                                 images[alias] = Image.FromFile(imagePath);
                             }
                             catch (FileNotFoundException)

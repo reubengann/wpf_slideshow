@@ -60,7 +60,10 @@ namespace Show
             foobar.OnLog -= LogMessage;
             RenderSlide();
             watch = new FileSystemWatcher();
-            watch.Path = Path.GetDirectoryName(Path.GetFullPath(path));
+            string? dirName = Path.GetDirectoryName(Path.GetFullPath(path));
+            if (dirName == null)
+                throw new Exception("Could not get directory name");
+            watch.Path = dirName;
             watch.Filter = Path.GetFileName(path);
             watch.Changed += FileChanged;
             watch.NotifyFilter = NotifyFilters.LastWrite;
