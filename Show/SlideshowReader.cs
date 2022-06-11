@@ -338,7 +338,7 @@ namespace Show
             return image;
         }
 
-        private string GetAnImageWithBasename(string basename, string folder)
+        private static string GetAnImageWithBasename(string basename, string folder)
         {
             folder = Path.GetFullPath(folder);
             basename = Path.Combine(folder, basename);
@@ -354,20 +354,20 @@ namespace Show
             Log($"Got {command} on line {line}, but no slide has been started");
         }
 
-        private Color GetColorFromFloats(float[] fracColors)
+        private static Color GetColorFromFloats(float[] fracColors)
         {
             int[] c = fracColors.Select(x => (int)(x * 255)).ToArray();
             return Color.FromArgb(c[3], c[0], c[1], c[2]);
         }
 
-        private float[] GetFourFloats(string remainder)
+        private static float[] GetFourFloats(string remainder)
         {
             float[] result = remainder.Split().Select(x => float.Parse(x)).ToArray();
             if (result.Length != 4) throw new FormatException();
             return result;
         }
 
-        private (string, string) BreakBySpaces(string line)
+        private static (string, string) BreakBySpaces(string line)
         {
             int SpacePos = line.IndexOf(' ');
             if (SpacePos == -1) return (line, "");
