@@ -13,10 +13,12 @@ namespace Show
     {
         private readonly string path;
         public Action<string>? OnLog;
+        Dictionary<string, Image> images;
 
         public SlideshowReader(string path)
         {
             this.path = path;
+            images = new();
         }
 
         private void Log(string s)
@@ -37,7 +39,7 @@ namespace Show
             string definingStyleName = "";
             Dictionary<string, SlideText> styles = new();
             Dictionary<string, Slide> templates = new();
-            Dictionary<string, Image> images = new();
+            
             while ((line = sr.ReadLine()) != null)
             {
                 i++;
@@ -255,28 +257,12 @@ namespace Show
                             break;
                         case "image":
                             if (CurrentSlide == null) { PrintNoSlideError("image", i); continue; };
-                            string[] imgArgs = remainder.Split();
-                            if(imgArgs.Length < 4)
+                            try
                             {
-                                Log($"Error on line {i}: Too few arguments for image. Requires short name, x, y, and scale.");
-                                continue;
-                            }
-                            if (!images.ContainsKey(imgArgs[0]))
-                            {
-                                Log($"Error on line {i}: There is no image with the name {imgArgs[0]} loaded.");
-                            }
-                            try 
-                            { 
-                                var image = new SlideImage(images[imgArgs[0]]);
-                                image.x = float.Parse(imgArgs[1]);
-                                image.y = float.Parse(imgArgs[2]);
-                                image.scale = float.Parse(imgArgs[3]);
+                                SlideImage image = ParseImageArgs(remainder, i);
                                 CurrentSlide.Add(image);
                             }
-                            catch (FormatException)
-                            {
-                                Log($"Error on line {i}: Could not parse x, y, or scale of image");
-                            }
+                            catch (FormatException) { continue; }
                             break;
                         default:
                             Log($"***************COMMAND {command}, RHS: {remainder}");
@@ -304,6 +290,52 @@ namespace Show
                 }
             }
             return slideshow;
+        }
+
+        private SlideImage ParseImageArgs(string remainder, int sourceLine)
+        {
+            string[] imgArgs = remainder.Split();
+            if (!images.ContainsKey(imgArgs[0]))
+            {
+                Log($"Error on line {sourceLine}: There is no image with the name {imgArgs[0]} loaded.");
+                throw new ArgumentException();
+            }
+            var image = new SlideImage(images[imgArgs[0]]);
+            int i = 1;
+            while (i < imgArgs.Length)
+            {
+                switch(imgArgs[i])
+                {
+                    case "pos":
+                        if (!float.TryParse(imgArgs[i + 1], out image.x))
+                        {
+                            Log($"Error on line {sourceLine}: Could not parse x coordinate of pos");
+                            throw new ArgumentException();
+                        }
+                        if (!float.TryParse(imgArgs[i + 2], out image.y))
+                        {
+                            Log($"Error on line {sourceLine}: Could not parse y coordinate of pos");
+                            throw new ArgumentException();
+                        }
+                        i += 2;
+                        break;
+                    case "scale":
+                        if (!float.TryParse(imgArgs[i + 1], out image.scale))
+                        {
+                            Log($"Error on line {sourceLine}: Could not parse scale");
+                            throw new ArgumentException();
+                        }
+                        i++;
+                        break;
+                    default:
+                        Log($"Error on line {sourceLine}: Unknown argument {imgArgs[i]}");
+                        break;
+
+                }
+                i++;
+            }
+            
+            return image;
         }
 
         private string GetAnImageWithBasename(string basename, string folder)
