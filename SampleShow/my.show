@@ -1,6 +1,8 @@
 : declare_font sans OpenSans-Regular.ttf
 : declare_font main Karmina Bold Italic.otf
 
+: load_image world100 The_World_as_100_People
+
 : begin_style my_style
 :    size 12
 :    font sans
@@ -49,6 +51,7 @@ Hello, Sailor!
 This is a many-line text input
 : blank
 There is a blank line above me.
+:image world100 0.3 0.4 .75
 
 # ------------------------------------------------
 : slide

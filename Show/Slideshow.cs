@@ -30,9 +30,13 @@ namespace Show
         {
             if (item is SlideText)
             {
-                CurrentSlideText = item as SlideText;
+                CurrentSlideText = (SlideText)item;
                 CurrentSlideText.LeftMargin = LeftMargin;
                 CurrentSlideText.RightMargin = RightMargin;
+                Items.Add(item);
+            }
+            else
+            {
                 Items.Add(item);
             }
         }
@@ -85,10 +89,17 @@ namespace Show
         }
     }
 
-    class SlideImage : SlideItem
+    public class SlideImage : SlideItem
     {
-        string Path;
+        public Image image;
+        public float x = 0.5f;
+        public float y = 0.5f;
+        public float scale = 1f;
 
+        public SlideImage(Image image)
+        {
+            this.image = image;
+        }
     }
 
     public enum TextJustification

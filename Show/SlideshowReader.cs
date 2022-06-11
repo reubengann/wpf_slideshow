@@ -37,6 +37,7 @@ namespace Show
             string definingStyleName = "";
             Dictionary<string, SlideText> styles = new();
             Dictionary<string, Slide> templates = new();
+            Dictionary<string, Image> images = new();
             while ((line = sr.ReadLine()) != null)
             {
                 i++;
@@ -236,6 +237,47 @@ namespace Show
                         case "blank":
                             CurrentSlide?.CurrentSlideText?.PushText("\n");
                             break;
+                        case "load_image":
+                            var (alias, basename) = BreakBySpaces(remainder);
+                            if(images.ContainsKey(alias))
+                            {
+                                Log($"Error on line {i}: attempt to redeclare image {alias}");
+                            }
+                            try
+                            {
+                                var imagePath = GetAnImageWithBasename(basename, Path.GetDirectoryName(path));
+                                images[alias] = Image.FromFile(imagePath);
+                            }
+                            catch (FileNotFoundException)
+                            {
+                                Log($"Error on line {i}: Could not find any image with name {basename}");
+                            }
+                            break;
+                        case "image":
+                            if (CurrentSlide == null) { PrintNoSlideError("image", i); continue; };
+                            string[] imgArgs = remainder.Split();
+                            if(imgArgs.Length < 4)
+                            {
+                                Log($"Error on line {i}: Too few arguments for image. Requires short name, x, y, and scale.");
+                                continue;
+                            }
+                            if (!images.ContainsKey(imgArgs[0]))
+                            {
+                                Log($"Error on line {i}: There is no image with the name {imgArgs[0]} loaded.");
+                            }
+                            try 
+                            { 
+                                var image = new SlideImage(images[imgArgs[0]]);
+                                image.x = float.Parse(imgArgs[1]);
+                                image.y = float.Parse(imgArgs[2]);
+                                image.scale = float.Parse(imgArgs[3]);
+                                CurrentSlide.Add(image);
+                            }
+                            catch (FormatException)
+                            {
+                                Log($"Error on line {i}: Could not parse x, y, or scale of image");
+                            }
+                            break;
                         default:
                             Log($"***************COMMAND {command}, RHS: {remainder}");
                             break;
@@ -262,6 +304,17 @@ namespace Show
                 }
             }
             return slideshow;
+        }
+
+        private string GetAnImageWithBasename(string basename, string folder)
+        {
+            folder = Path.GetFullPath(folder);
+            basename = Path.Combine(folder, basename);
+            if (File.Exists(basename + ".jpg"))
+                return basename + ".jpg";
+             if (File.Exists(basename + ".png"))
+                return basename + ".png";
+            throw new FileNotFoundException();
         }
 
         private void PrintNoSlideError(string command, int line)

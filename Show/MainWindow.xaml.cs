@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,6 +54,7 @@ namespace Show
     public interface SlideShowItemFactory
     {
         public void AddTextItem(SlideText text);
+        public void AddImageItem(SlideImage image);
         public void RenderSlide(Slide slide);
     }
 
@@ -76,10 +79,11 @@ namespace Show
             {
                 if (si.GetType() == typeof(SlideText))
                 {
-                    SlideText? t = si as SlideText;
-                    if (t == null)
-                        throw new NullReferenceException("Cannot add null text item");
-                    AddTextItem(t);
+                    AddTextItem((SlideText)si);
+                }
+                else if(si.GetType() == typeof(SlideImage))
+                {
+                    AddImageItem((SlideImage)si);
                 }
             }
         }
@@ -102,11 +106,11 @@ namespace Show
             {
                 ShadowDepth = 1
             };
-            tb.Margin = GetMargins(text, tb);
+            tb.Margin = GetTextMargin(text, tb);
             grid.Children.Add(tb);
         }
 
-        private static Thickness GetMargins(SlideText text, TextBlock tb)
+        private static Thickness GetTextMargin(SlideText text, TextBlock tb)
         {
 
             Thickness thick = new Thickness(0);
@@ -142,6 +146,42 @@ namespace Show
                 case TextJustification.Center: return HorizontalAlignment.Center;
             }
             throw new Exception("Unknown justification type");
+        }
+
+        public void AddImageItem(SlideImage image)
+        {
+            var ic = new Image();
+            ic.Source = ToImageSource(image.image, image.image.RawFormat, image.scale);
+            ic.Width = image.image.Width * image.scale;
+            ic.Height = image.image.Height * image.scale;
+            ic.Margin = GetImageMargin(image);
+            grid.Children.Add(ic);
+        }
+
+        private Thickness GetImageMargin(SlideImage image)
+        {
+            var thick = new Thickness();
+            thick.Top = 2 * (900) * (0.5 - image.y);
+            thick.Left = 2 * (1600) * (image.x - 0.5);
+            return thick;
+        }
+
+        private static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat, float scale)
+        {
+            BitmapImage bitmap = new BitmapImage();
+
+            using (MemoryStream stream = new MemoryStream())
+            {
+                var dest = new System.Drawing.Bitmap(image, new System.Drawing.Size((int)(image.Width*scale), (int)(image.Height*scale)));
+                dest.Save(stream, imageFormat);
+                stream.Seek(0, SeekOrigin.Begin);
+                bitmap.BeginInit();
+                bitmap.StreamSource = stream;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+            }
+
+            return bitmap;
         }
     }
 
