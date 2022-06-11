@@ -14,6 +14,9 @@ namespace Show
         private readonly string path;
         public Action<string>? OnLog;
         Dictionary<string, Image> images;
+        int lineCounter = 0;
+        Dictionary<string, Slide> templates = new();
+
 
         public SlideshowReader(string path)
         {
@@ -33,16 +36,14 @@ namespace Show
             Slideshow slideshow = new Slideshow();
             string? line;
             Slide? CurrentSlide = null;
-            int i = 0;
             SlideText t = new SlideText("");
             bool continuingText = false;
             string definingStyleName = "";
             Dictionary<string, SlideText> styles = new();
-            Dictionary<string, Slide> templates = new();
             
             while ((line = sr.ReadLine()) != null)
             {
-                i++;
+                lineCounter++;
                 if (line.StartsWith("#") || string.IsNullOrWhiteSpace(line)) continue;
                 if (line.StartsWith(':'))
                 {
@@ -53,39 +54,23 @@ namespace Show
                         case "slide":
                             if(!string.IsNullOrEmpty(definingStyleName))
                             {
-                                Log($"Error on line {i}: Attempt to declare slide while defining style {definingStyleName}.");
+                                Log($"Error on line {lineCounter}: Attempt to declare slide while defining style {definingStyleName}.");
                                 definingStyleName = "";
                             }
-                            string slideName = "";
-                            bool visible = true;
-                            if (!string.IsNullOrEmpty(remainder))
+                            try
                             {
-                                var (attemptedslideName, visibilityName) = BreakBySpaces(remainder);
-                                switch(visibilityName)
-                                {
-                                    case "yes": visible = true; break;
-                                    case "no": visible = false; break;
-                                    case "": visible = true; break;
-                                    default: 
-                                        Log($"Error on line {i}: Invalid visibility {visibilityName} (must be yes or no or leaving it blank)");
-                                        break;
-                                }
-                                if(templates.ContainsKey(attemptedslideName))
-                                {
-                                    Log($"Error on line {i}: attempt to redefine slide {attemptedslideName}");
-                                    continue;
-                                }
-                                slideName = attemptedslideName;
+                                var (slideName, visible) = ParseSlideArgs(remainder);
+                                CurrentSlide = new Slide();
+                                if (visible)
+                                    slideshow.Slides.Add(CurrentSlide);
+                                if (!string.IsNullOrEmpty(slideName))
+                                    templates[slideName] = CurrentSlide;
+                                t = new SlideText("");
                             }
-                            CurrentSlide = new Slide();
-                            if(visible)
-                                slideshow.Slides.Add(CurrentSlide);
-                            if (!string.IsNullOrEmpty(slideName))
-                                templates[slideName] = CurrentSlide;
-                            t = new SlideText("");
+                            catch (ArgumentException) { continue; };
                             break;
                         case "background":
-                            if (CurrentSlide == null) { PrintNoSlideError("backgound color", i); continue; };
+                            if (CurrentSlide == null) { PrintNoSlideError("backgound color", lineCounter); continue; };
                             try
                             {
                                 float[] FracColors = GetFourFloats(remainder);
@@ -94,31 +79,31 @@ namespace Show
                             }
                             catch (FormatException e)
                             {
-                                Log($"Error on line {i}: Expected four floats in background color, but got {e.Message}");
+                                Log($"Error on line {lineCounter}: Expected four floats in background color, but got {e.Message}");
                             }
                             break;
                         case "y":
-                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("text y coordinate", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("text y coordinate", lineCounter); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             try
                             {
                                 t.YCoordinate = float.Parse(remainder);
                             }
-                            catch (FormatException e) { Log($"Error on line {i} while parsing y coordinate: Expected float, but got {e.Message}"); }
+                            catch (FormatException e) { Log($"Error on line {lineCounter} while parsing y coordinate: Expected float, but got {e.Message}"); }
                             continuingText = false;
                             break;
                         case "text_color":
-                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("text color", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("text color", lineCounter); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             try
                             {
                                 t.color = GetColorFromFloats(GetFourFloats(remainder));
                             }
-                            catch (FormatException e) { Log($"Error on line {i} while parsing text color: Expected floats, but got {e.Message}"); }
+                            catch (FormatException e) { Log($"Error on line {lineCounter} while parsing text color: Expected floats, but got {e.Message}"); }
                             continuingText = false;
                             break;
                         case "justify":
-                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("justification", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("justification", lineCounter); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             switch (remainder)
                             {
@@ -132,26 +117,26 @@ namespace Show
                                     t.Justification = TextJustification.Center;
                                     break;
                                 default:
-                                    Log($"Invalid justification {remainder} on line {i}. Must be left, right or center.");
+                                    Log($"Invalid justification {remainder} on line {lineCounter}. Must be left, right or center.");
                                     break;
                             }
                             continuingText = false;
                             break;
                         case "size":
-                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("size", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("size", lineCounter); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             try
                             {
                                 float f = float.Parse(remainder);
                                 if (f < 0)
                                 {
-                                    Log($"Got invalid size {f} line {i}. Size must be positive.");
+                                    Log($"Got invalid size {f} line {lineCounter}. Size must be positive.");
                                     continue;
                                 }
 
                                 t.FontSize = f;
                             }
-                            catch (FormatException) { Log($"Invalid size {remainder} on line {i}. Must be a float"); }
+                            catch (FormatException) { Log($"Invalid size {remainder} on line {lineCounter}. Must be a float"); }
                             continuingText = false;
                             break;
                         case "declare_font":
@@ -165,7 +150,7 @@ namespace Show
                             catch (FileNotFoundException) { Log($"Error loading {fontName} from {fontFile}: file not found."); }
                             break;
                         case "font":
-                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("font", i); continue; }
+                            if (CurrentSlide == null && string.IsNullOrEmpty(definingStyleName)) { PrintNoSlideError("font", lineCounter); continue; }
                             if (!string.IsNullOrEmpty(t.Text)) t = new SlideText("");
                             if (!FontLibrary.Instance.HasFont(remainder))
                             {
@@ -178,7 +163,7 @@ namespace Show
                         case "begin_style":
                             if (!string.IsNullOrEmpty(definingStyleName))
                             { 
-                                Log($"Error on line {i}: attempt to define a new style, but we are already defining style {definingStyleName}");
+                                Log($"Error on line {lineCounter}: attempt to define a new style, but we are already defining style {definingStyleName}");
                                 continue;
                             }
                             if(styles.ContainsKey(remainder))
@@ -191,7 +176,7 @@ namespace Show
                         case "end_style":
                             if (string.IsNullOrEmpty(definingStyleName))
                             {
-                                Log($"Error on line {i}: attempt to end a style, but we are not defining one.");
+                                Log($"Error on line {lineCounter}: attempt to end a style, but we are not defining one.");
                                 continue;
                             }
                             styles[definingStyleName] = t;
@@ -201,7 +186,7 @@ namespace Show
                         case "style":
                             if(!styles.ContainsKey(remainder))
                             {
-                                Log($"Error on line {i}: undefined style {remainder}");
+                                Log($"Error on line {lineCounter}: undefined style {remainder}");
                                 continue;
                             }
                             t = new SlideText(styles[remainder]);
@@ -209,31 +194,31 @@ namespace Show
                         case "use_slide":
                             if(!templates.ContainsKey(remainder))
                             {
-                                Log($"Error on line {i}: attempt to use undefined slide template {remainder}");
+                                Log($"Error on line {lineCounter}: attempt to use undefined slide template {remainder}");
                                 continue;
                             }
                             CurrentSlide?.CopyTemplate(templates[remainder]);
                             break;
                         case "right_margin":
-                            if (CurrentSlide == null) { PrintNoSlideError("right margin", i); continue; };
+                            if (CurrentSlide == null) { PrintNoSlideError("right margin", lineCounter); continue; };
                             try
                             {
                                 CurrentSlide.RightMargin = float.Parse(remainder);
                             }
                             catch (FormatException e)
                             {
-                                Log($"Error on line {i}: Expected float in right margin, but got {e.Message}");
+                                Log($"Error on line {lineCounter}: Expected float in right margin, but got {e.Message}");
                             }
                             break;
                         case "left_margin":
-                            if (CurrentSlide == null) { PrintNoSlideError("left margin", i); continue; };
+                            if (CurrentSlide == null) { PrintNoSlideError("left margin", lineCounter); continue; };
                             try
                             {
                                 CurrentSlide.LeftMargin = float.Parse(remainder);
                             }
                             catch (FormatException e)
                             {
-                                Log($"Error on line {i}: Expected float in left margin, but got {e.Message}");
+                                Log($"Error on line {lineCounter}: Expected float in left margin, but got {e.Message}");
                             }
                             break;
                         case "blank":
@@ -243,7 +228,7 @@ namespace Show
                             var (alias, basename) = BreakBySpaces(remainder);
                             if(images.ContainsKey(alias))
                             {
-                                Log($"Error on line {i}: attempt to redeclare image {alias}");
+                                Log($"Error on line {lineCounter}: attempt to redeclare image {alias}");
                             }
                             try
                             {
@@ -255,14 +240,14 @@ namespace Show
                             }
                             catch (FileNotFoundException)
                             {
-                                Log($"Error on line {i}: Could not find any image with name {basename}");
+                                Log($"Error on line {lineCounter}: Could not find any image with name {basename}");
                             }
                             break;
                         case "image":
-                            if (CurrentSlide == null) { PrintNoSlideError("image", i); continue; };
+                            if (CurrentSlide == null) { PrintNoSlideError("image", lineCounter); continue; };
                             try
                             {
-                                SlideImage image = ParseImageArgs(remainder, i);
+                                SlideImage image = ParseImageArgs(remainder);
                                 CurrentSlide.Add(image);
                             }
                             catch (FormatException) { continue; }
@@ -275,7 +260,7 @@ namespace Show
                 else //text
                 {
                     if(CurrentSlide == null)
-                        Log($"Got text on line {i}, but no slide has been started");
+                        Log($"Got text on line {lineCounter}, but no slide has been started");
                     else
                     {
                         if(CurrentSlide.CurrentSlideText == null || !continuingText)
@@ -295,12 +280,38 @@ namespace Show
             return slideshow;
         }
 
-        private SlideImage ParseImageArgs(string remainder, int sourceLine)
+        private (string, bool) ParseSlideArgs(string remainder)
+        {
+            string slideName = "";
+            bool visible = true;
+            if (!string.IsNullOrEmpty(remainder))
+            {
+                var (attemptedslideName, visibilityName) = BreakBySpaces(remainder);
+                switch (visibilityName)
+                {
+                    case "yes": visible = true; break;
+                    case "no": visible = false; break;
+                    case "": visible = true; break;
+                    default:
+                        Log($"Error on line {lineCounter}: Invalid visibility {visibilityName} (must be yes or no or leaving it blank)");
+                        break;
+                }
+                if (templates.ContainsKey(attemptedslideName))
+                {
+                    Log($"Error on line {lineCounter}: attempt to redefine slide {attemptedslideName}");
+                    throw new ArgumentException();
+                }
+                slideName = attemptedslideName;
+            }
+            return (slideName, visible);
+        }
+
+        private SlideImage ParseImageArgs(string remainder)
         {
             string[] imgArgs = remainder.Split();
             if (!images.ContainsKey(imgArgs[0]))
             {
-                Log($"Error on line {sourceLine}: There is no image with the name {imgArgs[0]} loaded.");
+                Log($"Error on line {lineCounter}: There is no image with the name {imgArgs[0]} loaded.");
                 throw new ArgumentException();
             }
             var image = new SlideImage(images[imgArgs[0]]);
@@ -312,12 +323,12 @@ namespace Show
                     case "pos":
                         if (!float.TryParse(imgArgs[i + 1], out image.x))
                         {
-                            Log($"Error on line {sourceLine}: Could not parse x coordinate of pos");
+                            Log($"Error on line {lineCounter}: Could not parse x coordinate of pos");
                             throw new ArgumentException();
                         }
                         if (!float.TryParse(imgArgs[i + 2], out image.y))
                         {
-                            Log($"Error on line {sourceLine}: Could not parse y coordinate of pos");
+                            Log($"Error on line {lineCounter}: Could not parse y coordinate of pos");
                             throw new ArgumentException();
                         }
                         i += 2;
@@ -325,13 +336,13 @@ namespace Show
                     case "scale":
                         if (!float.TryParse(imgArgs[i + 1], out image.scale))
                         {
-                            Log($"Error on line {sourceLine}: Could not parse scale");
+                            Log($"Error on line {lineCounter}: Could not parse scale");
                             throw new ArgumentException();
                         }
                         i++;
                         break;
                     default:
-                        Log($"Error on line {sourceLine}: Unknown argument {imgArgs[i]}");
+                        Log($"Error on line {lineCounter}: Unknown argument {imgArgs[i]}");
                         break;
 
                 }
