@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Show
 {
@@ -341,6 +342,15 @@ namespace Show
                         }
                         i++;
                         break;
+                    case "crop":
+                        Thickness thickness = new Thickness();
+                        thickness.Left = ParseFloatIntoWithError(imgArgs[i + 1], "left value of crop");
+                        thickness.Top = ParseFloatIntoWithError(imgArgs[i + 2], "top value of crop");
+                        thickness.Right = ParseFloatIntoWithError(imgArgs[i + 3], "right value of crop");
+                        thickness.Bottom = ParseFloatIntoWithError(imgArgs[i + 4], "bottom value of crop");
+                        i += 4;
+                        image.crop = thickness;
+                        break;
                     default:
                         Log($"Error on line {lineCounter}: Unknown argument {imgArgs[i]}");
                         break;
@@ -350,6 +360,19 @@ namespace Show
             }
             
             return image;
+        }
+
+        private float ParseFloatIntoWithError(string s, string fieldName)
+        {
+            try
+            {
+                return float.Parse(s);
+            }
+            catch(FormatException)
+            {
+                Log($"Error on line {lineCounter}: Could not parse {fieldName}");
+                throw new ArgumentException();
+            }
         }
 
         private static string GetAnImageWithBasename(string basename, string folder)

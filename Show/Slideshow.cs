@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows;
 
 namespace Show
 {
@@ -95,6 +96,7 @@ namespace Show
         public float x = 0.5f;
         public float y = 0.5f;
         public float scale = 1f;
+        public Thickness? crop;
 
         public SlideImage(Image image)
         {

@@ -31,6 +31,7 @@
                            FontFamily="{StaticResource KarminaBoldItalic}"
                            FontSize="100"
                            />
+                <!--<Image Source="C:\repos\wpf_slideshow\SampleShow\The_World_as_100_People.png"/>-->
             </Grid>
         </Grid>
     </Viewbox>

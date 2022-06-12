@@ -151,11 +151,26 @@ namespace Show
         public void AddImageItem(SlideImage image)
         {
             var ic = new Image();
-            ic.Source = ToImageSource(image.image, image.image.RawFormat, image.scale);
+            Int32Rect? crop = GetCrop(image);
+            ic.Source = ToImageSource(image.image, image.image.RawFormat, image.scale, crop);
             ic.Width = image.image.Width * image.scale;
             ic.Height = image.image.Height * image.scale;
             ic.Margin = GetImageMargin(image);
             grid.Children.Add(ic);
+        }
+
+        private Int32Rect? GetCrop(SlideImage image)
+        {
+            if (image.crop == null) return null;
+            Thickness thick = (Thickness)image.crop;
+            Int32Rect crop = new Int32Rect();
+            float w = (float)(1 - thick.Left - thick.Right);
+            float h = (float)(1 - thick.Top - thick.Bottom);
+            crop.X = (int)(thick.Left * image.scale * image.image.Width);
+            crop.Y = (int)(thick.Top * image.scale * image.image.Height);
+            crop.Width = (int)(image.image.Width * image.scale * w);
+            crop.Height = (int)(image.image.Height * image.scale * h);
+            return crop;
         }
 
         private Thickness GetImageMargin(SlideImage image)
@@ -166,13 +181,14 @@ namespace Show
             return thick;
         }
 
-        private static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat, float scale)
+        private static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat, float scale, Int32Rect? crop = null)
         {
             BitmapImage bitmap = new BitmapImage();
 
             using (MemoryStream stream = new MemoryStream())
             {
                 var dest = new System.Drawing.Bitmap(image, new System.Drawing.Size((int)(image.Width*scale), (int)(image.Height*scale)));
+                
                 dest.Save(stream, imageFormat);
                 stream.Seek(0, SeekOrigin.Begin);
                 bitmap.BeginInit();
@@ -180,8 +196,9 @@ namespace Show
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.EndInit();
             }
+            if (crop == null) return bitmap;
+            return new CroppedBitmap(bitmap, (Int32Rect)crop);
 
-            return bitmap;
         }
     }
 
