@@ -151,19 +151,18 @@ namespace Show
         public void AddImageItem(SlideImage image)
         {
             var ic = new Image();
-            Int32Rect? crop = GetCrop(image);
-            ic.Source = ToImageSource(image.image, image.image.RawFormat, image.scale, crop);
+            ic.Source = ToImageSource(image.image, image.image.RawFormat, image.scale);
             ic.Width = image.image.Width * image.scale;
             ic.Height = image.image.Height * image.scale;
             ic.Margin = GetImageMargin(image);
+            if(image.crop != null)
+                ic.Clip = new RectangleGeometry(GetCrop(image, (Thickness)image.crop));
             grid.Children.Add(ic);
         }
 
-        private Int32Rect? GetCrop(SlideImage image)
+        private Rect GetCrop(SlideImage image, Thickness thick)
         {
-            if (image.crop == null) return null;
-            Thickness thick = (Thickness)image.crop;
-            Int32Rect crop = new Int32Rect();
+            Rect crop = new Rect();
             float w = (float)(1 - thick.Left - thick.Right);
             float h = (float)(1 - thick.Top - thick.Bottom);
             crop.X = (int)(thick.Left * image.scale * image.image.Width);
@@ -181,7 +180,7 @@ namespace Show
             return thick;
         }
 
-        private static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat, float scale, Int32Rect? crop = null)
+        private static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat, float scale)
         {
             BitmapImage bitmap = new BitmapImage();
 
@@ -196,8 +195,7 @@ namespace Show
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.EndInit();
             }
-            if (crop == null) return bitmap;
-            return new CroppedBitmap(bitmap, (Int32Rect)crop);
+            return bitmap;
 
         }
     }

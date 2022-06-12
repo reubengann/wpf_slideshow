@@ -31,7 +31,11 @@
                            FontFamily="{StaticResource KarminaBoldItalic}"
                            FontSize="100"
                            />
-                <!--<Image Source="C:\repos\wpf_slideshow\SampleShow\The_World_as_100_People.png"/>-->
+                <Image Source="C:\repos\wpf_slideshow\SampleShow\The_World_as_100_People.png">
+                    <Image.Clip>
+                        <RectangleGeometry Rect="10 0 1000 50"/>
+                    </Image.Clip>
+                </Image>
             </Grid>
         </Grid>
     </Viewbox>
