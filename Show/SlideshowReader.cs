@@ -351,6 +351,10 @@ namespace Show
                         i += 4;
                         image.crop = thickness;
                         break;
+                    case "rotation":
+                        image.rotation = ParseFloatIntoWithError(imgArgs[i + 1], "rotation angle");
+                        i++;
+                        break;
                     default:
                         Log($"Error on line {lineCounter}: Unknown argument {imgArgs[i]}");
                         break;

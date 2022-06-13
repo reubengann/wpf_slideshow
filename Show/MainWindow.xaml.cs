@@ -155,8 +155,22 @@ namespace Show
             ic.Width = image.image.Width * image.scale;
             ic.Height = image.image.Height * image.scale;
             ic.Margin = GetImageMargin(image);
-            if(image.crop != null)
-                ic.Clip = new RectangleGeometry(GetCrop(image, (Thickness)image.crop));
+            if (image.crop != null)
+            {
+                Rect rect = GetCrop(image, (Thickness)image.crop);
+                ic.Clip = new RectangleGeometry(rect);
+            }
+
+            if (image.rotation != 0)
+            {
+                if (image.crop != null)
+                {
+                    Rect rect = GetCrop(image, (Thickness)image.crop);
+                    ic.RenderTransform = new RotateTransform(image.rotation, (rect.Width + rect.X) / 2, (rect.Height + rect.Y)/ 2);
+                }
+                else 
+                    ic.RenderTransform = new RotateTransform(image.rotation, image.image.Width / 2, image.image.Height / 2);
+            }
             grid.Children.Add(ic);
         }
 
@@ -174,6 +188,7 @@ namespace Show
 
         private Thickness GetImageMargin(SlideImage image)
         {
+            // TODO: take margins into account
             var thick = new Thickness();
             thick.Top = 2 * (900) * (0.5 - image.y);
             thick.Left = 2 * (1600) * (image.x - 0.5);

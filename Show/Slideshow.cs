@@ -97,6 +97,7 @@ namespace Show
         public float y = 0.5f;
         public float scale = 1f;
         public Thickness? crop;
+        public double rotation = 0;
 
         public SlideImage(Image image)
         {
