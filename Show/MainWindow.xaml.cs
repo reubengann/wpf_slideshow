@@ -151,10 +151,13 @@ namespace Show
         public void AddImageItem(SlideImage image)
         {
             var ic = new Image();
-            ic.Source = ToImageSource(image.image, image.image.RawFormat, image.scale);
+            ic.Source = ToImageSource(image.image, image.image.RawFormat);
             ic.Width = image.image.Width * image.scale;
             ic.Height = image.image.Height * image.scale;
             ic.Margin = GetImageMargin(image);
+            var tg = new TransformGroup();
+            ic.RenderTransform = tg;
+            tg.Children.Add(new ScaleTransform(image.scale, image.scale));
             if (image.crop != null)
             {
                 Rect rect = GetCrop(image, (Thickness)image.crop);
@@ -166,10 +169,10 @@ namespace Show
                 if (image.crop != null)
                 {
                     Rect rect = GetCrop(image, (Thickness)image.crop);
-                    ic.RenderTransform = new RotateTransform(image.rotation, (rect.Width + rect.X) / 2, (rect.Height + rect.Y)/ 2);
+                    tg.Children.Add(new RotateTransform(image.rotation, (rect.Width + rect.X) / 2, (rect.Height + rect.Y)/ 2));
                 }
                 else 
-                    ic.RenderTransform = new RotateTransform(image.rotation, image.image.Width / 2, image.image.Height / 2);
+                    tg.Children.Add(new RotateTransform(image.rotation, image.image.Width / 2, image.image.Height / 2));
             }
             grid.Children.Add(ic);
         }
@@ -188,20 +191,26 @@ namespace Show
 
         private Thickness GetImageMargin(SlideImage image)
         {
-            // TODO: take margins into account
+            // TODO: take crop into account
             var thick = new Thickness();
             thick.Top = 2 * (900) * (0.5 - image.y);
-            thick.Left = 2 * (1600) * (image.x - 0.5);
+            double bumpLeft = 0;
+            if (image.crop != null)
+            {
+                var t = (Thickness)image.crop;
+                bumpLeft = (t.Right - t.Left)/(2 * image.scale);
+            }
+            thick.Left = 2 * (1600) * (image.x + bumpLeft - 0.5);
             return thick;
         }
 
-        private static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat, float scale)
+        private static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat)
         {
             BitmapImage bitmap = new BitmapImage();
 
             using (MemoryStream stream = new MemoryStream())
             {
-                var dest = new System.Drawing.Bitmap(image, new System.Drawing.Size((int)(image.Width*scale), (int)(image.Height*scale)));
+                var dest = new System.Drawing.Bitmap(image);
                 
                 dest.Save(stream, imageFormat);
                 stream.Seek(0, SeekOrigin.Begin);

@@ -51,7 +51,7 @@ Hello, Sailor!
 This is a many-line text input
 : blank
 There is a blank line above me.
-:image world100 pos 0.5 0.35 scale 1.2 crop 0.0 0.12 0.5 0.6 rotation 30
+:image world100 pos 0.4 0.45 scale 1.2 crop 0.0 0.12 0.5 0.6 rotation 30
 
 # ------------------------------------------------
 : slide
