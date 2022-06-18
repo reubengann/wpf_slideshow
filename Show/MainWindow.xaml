@@ -24,15 +24,17 @@
             <Border Width="1600" Height="900" Background="{Binding CurrentBackgroundColor, Converter={StaticResource ColorToSolidColorBrush_ValueConverter}}">
             </Border>
             
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="MainGrid" Width="1600" Height="900">
+            <Canvas HorizontalAlignment="Center" VerticalAlignment="Center" x:Name="MainGrid" Width="1600" Height="900">
                 <TextBlock Text="Unfortunately, there's a radio connected to my brain."
                            Foreground="White"
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Canvas.Left="-200"
+                           Canvas.Top="380"
                            FontFamily="{StaticResource KarminaBoldItalic}"
                            FontSize="100"
                            />
-                <!--<Image Source="C:\repos\wpf_slideshow\SampleShow\The_World_as_100_People.png"/>-->
-            </Grid>
+                <!--<Image Source="C:\repos\wpf_slideshow\SampleShow\The_World_as_100_People.png"
+                       Width="600" Canvas.Left="500"/>-->
+            </Canvas>
         </Grid>
     </Viewbox>
 </Window>

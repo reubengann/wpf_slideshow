@@ -60,9 +60,9 @@ namespace Show
 
     public class WPFSlideShowFactory : SlideShowItemFactory
     {
-        private Grid grid;
+        private Canvas grid;
 
-        public WPFSlideShowFactory(Grid mainGrid)
+        public WPFSlideShowFactory(Canvas mainGrid)
         {
             grid = mainGrid;
             var app = new Uri(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -95,9 +95,6 @@ namespace Show
             {
                 Text = text.Text,
                 Foreground = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B)),
-                HorizontalAlignment = JustificationToHorizAlignment(text.Justification),
-                VerticalAlignment = VerticalAlignment.Center,
-                //FontFamily = Application.Current.Resources["KarminaBoldItalic"] as FontFamily,
                 FontFamily = FontLibrary.Instance.Get(text.FontName),
                 FontSize = 10 * text.FontSize,
                 TextAlignment = JustificationToTextAlignment(text.Justification)
@@ -106,24 +103,45 @@ namespace Show
             {
                 ShadowDepth = 1
             };
-            tb.Margin = GetTextMargin(text, tb);
+            Point placement = ComputePositionText(text, tb);
+            Canvas.SetLeft(tb, placement.X);
+            Canvas.SetTop(tb, placement.Y);
             grid.Children.Add(tb);
         }
 
-        private static Thickness GetTextMargin(SlideText text, TextBlock tb)
+        private Point ComputePositionText(SlideText text, TextBlock tb)
         {
+            Point p = new Point();
+            Size textsize = MeasureString(text.Text, tb);
+            if(text.Justification == TextJustification.Center)
+            {
+                p.X = 800 - textsize.Width / 2;
+            }
+            else if (text.Justification == TextJustification.Right)
+            {
+                p.X = 1600 * (1 - text.RightMargin) - textsize.Width;
+            }
+            else
+            {
+                p.X = 1600 * text.LeftMargin;
+            }
+            p.Y = (1 - text.YCoordinate) * 900 - textsize.Height / 2;
+            return p;
+        }
 
-            Thickness thick = new Thickness(0);
-            thick.Top = 2 * (900 - tb.FontSize) * (0.5 - text.YCoordinate);
-            if (text.Justification == TextJustification.Left)
-            {
-                thick.Left = 1600 * text.LeftMargin;
-            }
-            else if(text.Justification == TextJustification.Right)
-            {
-                thick.Right = 1600 * text.RightMargin;
-            }
-            return thick;
+        private Size MeasureString(string candidate, TextBlock textBlock)
+        {
+            var formattedText = new FormattedText(
+                candidate,
+                CultureInfo.CurrentCulture,
+                FlowDirection.LeftToRight,
+                new Typeface(textBlock.FontFamily, textBlock.FontStyle, textBlock.FontWeight, textBlock.FontStretch),
+                textBlock.FontSize,
+                Brushes.Black,
+                new NumberSubstitution(),
+                1);
+
+            return new Size(formattedText.Width, formattedText.Height);
         }
 
         static TextAlignment JustificationToTextAlignment(TextJustification j)
@@ -136,25 +154,11 @@ namespace Show
             }
             throw new Exception("Unknown justification type");
         }
-        
-        static HorizontalAlignment JustificationToHorizAlignment(TextJustification j)
-        {
-            switch (j)
-            {
-                case TextJustification.Left: return HorizontalAlignment.Left;
-                case TextJustification.Right: return HorizontalAlignment.Right;
-                case TextJustification.Center: return HorizontalAlignment.Center;
-            }
-            throw new Exception("Unknown justification type");
-        }
 
         public void AddImageItem(SlideImage image)
         {
             var ic = new Image();
             ic.Source = ToImageSource(image.image, image.image.RawFormat);
-            ic.Width = image.image.Width * image.scale;
-            ic.Height = image.image.Height * image.scale;
-            ic.Margin = GetImageMargin(image);
             var tg = new TransformGroup();
             ic.RenderTransform = tg;
             tg.Children.Add(new ScaleTransform(image.scale, image.scale));
@@ -174,6 +178,8 @@ namespace Show
                 else 
                     tg.Children.Add(new RotateTransform(image.rotation, image.image.Width / 2, image.image.Height / 2));
             }
+            Canvas.SetLeft(ic, 1600 * image.x - image.image.Width * image.scale/2);
+            Canvas.SetTop(ic, 900 * (1 - image.y) - image.image.Height * image.scale / 2);
             grid.Children.Add(ic);
         }
 
@@ -187,21 +193,6 @@ namespace Show
             crop.Width = (int)(image.image.Width * image.scale * w);
             crop.Height = (int)(image.image.Height * image.scale * h);
             return crop;
-        }
-
-        private Thickness GetImageMargin(SlideImage image)
-        {
-            // TODO: take crop into account
-            var thick = new Thickness();
-            thick.Top = 2 * (900) * (0.5 - image.y);
-            double bumpLeft = 0;
-            if (image.crop != null)
-            {
-                var t = (Thickness)image.crop;
-                bumpLeft = (t.Right - t.Left)/(2 * image.scale);
-            }
-            thick.Left = 2 * (1600) * (image.x + bumpLeft - 0.5);
-            return thick;
         }
 
         private static ImageSource ToImageSource(System.Drawing.Image image, ImageFormat imageFormat)
