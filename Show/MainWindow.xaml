@@ -32,8 +32,10 @@
                            FontFamily="{StaticResource KarminaBoldItalic}"
                            FontSize="100"
                            />
-                <!--<Image Source="C:\repos\wpf_slideshow\SampleShow\The_World_as_100_People.png"
-                       Width="600" Canvas.Left="500"/>-->
+                <!--<Border Canvas.Left="500" Canvas.Top="200" BorderBrush="Blue" BorderThickness="3">
+                    <Image Source="C:\repos\wpf_slideshow\SampleShow\The_World_as_100_People.png"
+                       Width="600" />
+                </Border>-->
             </Canvas>
         </Grid>
     </Viewbox>

@@ -98,11 +98,18 @@ namespace Show
         public float scale = 1f;
         public Thickness? crop;
         public double rotation = 0;
+        public SlideImageBorder? border = null;
 
         public SlideImage(Image image)
         {
             this.image = image;
         }
+    }
+
+    public class SlideImageBorder
+    {
+        public Color BorderColor = Color.White;
+        public float Thickness = 10;
     }
 
     public enum TextJustification

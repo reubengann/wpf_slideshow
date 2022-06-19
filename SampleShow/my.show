@@ -2,6 +2,7 @@
 : declare_font main Karmina Bold Italic.otf
 
 : load_image world100 The_World_as_100_People
+: load_image snowman snowman
 
 : begin_style my_style
 :    size 12
@@ -90,3 +91,6 @@ This is a test of starting a line with
 \::: colons :::
 and also
 \# with hashes
+
+: slide
+: image snowman border_color 0 0 1 1 border_width 10 rotation 10

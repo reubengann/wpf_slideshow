@@ -94,7 +94,7 @@ namespace Show
             var tb = new TextBlock()
             {
                 Text = text.Text,
-                Foreground = new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B)),
+                Foreground = BrushFromColor(c),
                 FontFamily = FontLibrary.Instance.Get(text.FontName),
                 FontSize = 10 * text.FontSize,
                 TextAlignment = JustificationToTextAlignment(text.Justification)
@@ -107,6 +107,11 @@ namespace Show
             Canvas.SetLeft(tb, placement.X);
             Canvas.SetTop(tb, placement.Y);
             grid.Children.Add(tb);
+        }
+
+        private static SolidColorBrush BrushFromColor(System.Drawing.Color c)
+        {
+            return new SolidColorBrush(Color.FromArgb(c.A, c.R, c.G, c.B));
         }
 
         private Point ComputePositionText(SlideText text, TextBlock tb)
@@ -157,15 +162,28 @@ namespace Show
 
         public void AddImageItem(SlideImage image)
         {
-            var ic = new Image();
+            Image ic = new Image();
             ic.Source = ToImageSource(image.image, image.image.RawFormat);
+
+            FrameworkElement e = ic;
+            if (image.border != null)
+            {
+                Border b = new Border
+                {
+                    BorderBrush = BrushFromColor(image.border.BorderColor),
+                    BorderThickness = new Thickness(image.border.Thickness),
+                    Child = ic
+                };
+                e = b;
+            }
+
             var tg = new TransformGroup();
-            ic.RenderTransform = tg;
+            e.RenderTransform = tg;
             tg.Children.Add(new ScaleTransform(image.scale, image.scale));
             if (image.crop != null)
             {
                 Rect rect = GetCrop(image, (Thickness)image.crop);
-                ic.Clip = new RectangleGeometry(rect);
+                e.Clip = new RectangleGeometry(rect);
             }
 
             if (image.rotation != 0)
@@ -178,9 +196,10 @@ namespace Show
                 else 
                     tg.Children.Add(new RotateTransform(image.rotation, image.image.Width / 2, image.image.Height / 2));
             }
-            Canvas.SetLeft(ic, 1600 * image.x - image.image.Width * image.scale/2);
-            Canvas.SetTop(ic, 900 * (1 - image.y) - image.image.Height * image.scale / 2);
-            grid.Children.Add(ic);
+            
+            Canvas.SetLeft(e, 1600 * image.x - image.image.Width * image.scale/2);
+            Canvas.SetTop(e, 900 * (1 - image.y) - image.image.Height * image.scale / 2);
+            grid.Children.Add(e);
         }
 
         private Rect GetCrop(SlideImage image, Thickness thick)

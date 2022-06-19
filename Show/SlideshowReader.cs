@@ -356,6 +356,28 @@ namespace Show
                         image.rotation = ParseFloatIntoWithError(imgArgs[i + 1], "rotation angle");
                         i++;
                         break;
+                    case "border_color":
+                        Color c;
+                        try
+                        {
+                            c = GetColorFromFloats(imgArgs.Skip(i + 1).Take(4).Select(x => float.Parse(x)).ToArray());
+                        }
+                        catch(FormatException)
+                        {
+                            Log($"On line {lineCounter}: Invalid border color (must be 4 floats between 0 and 1)");
+                            continue;
+                        }
+                        i += 4;
+                        if (image.border == null)
+                            image.border = new SlideImageBorder();
+                        image.border.BorderColor = c;
+                        break;
+                    case "border_width":
+                        if (image.border == null)
+                            image.border = new SlideImageBorder();
+                        image.border.Thickness = ParseFloatIntoWithError(imgArgs[i + 1], "border thickness");
+                        i ++;
+                        break;
                     default:
                         Log($"Error on line {lineCounter}: Unknown argument {imgArgs[i]}");
                         break;
@@ -380,14 +402,19 @@ namespace Show
             }
         }
 
+        static string[] ImageFileExtensions =
+        {
+            ".jpg", ".png"
+        };
         private static string GetAnImageWithBasename(string basename, string folder)
         {
             folder = Path.GetFullPath(folder);
             basename = Path.Combine(folder, basename);
-            if (File.Exists(basename + ".jpg"))
-                return basename + ".jpg";
-             if (File.Exists(basename + ".png"))
-                return basename + ".png";
+            foreach(string ext in ImageFileExtensions)
+            {
+                if (File.Exists(basename + ext))
+                    return basename + ext;
+            }
             throw new FileNotFoundException();
         }
 
