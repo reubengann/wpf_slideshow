@@ -222,9 +222,6 @@ namespace Show
                                 Log($"Error on line {lineCounter}: Expected float in left margin, but got {e.Message}");
                             }
                             break;
-                        case "blank":
-                            CurrentSlide?.CurrentSlideText?.PushText("\n");
-                            break;
                         case "load_image":
                             var (alias, basename) = BreakBySpaces(remainder);
                             if(images.ContainsKey(alias))
@@ -264,6 +261,10 @@ namespace Show
                         Log($"Got text on line {lineCounter}, but no slide has been started");
                     else
                     {
+                        if (line[0] == '\\')
+                        {
+                            line = line[1..];
+                        }
                         if(CurrentSlide.CurrentSlideText == null || !continuingText)
                         {
                             t.Text = line;

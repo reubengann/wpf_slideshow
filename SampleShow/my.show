@@ -49,7 +49,7 @@ III. The Third, and Final, Section
 : size 6
 Hello, Sailor!
 This is a many-line text input
-: blank
+\
 There is a blank line above me.
 :image world100 pos 0.6 0.3 scale 1.2 crop 0 0.08 0.7 .7 rotation 30
 
@@ -86,4 +86,7 @@ That's it
 # ------------------------------------------------
 : slide
 : use_slide Section_3
-No, that wasn't it!!!
+This is a test of starting a line with
+\::: colons :::
+and also
+\# with hashes
