@@ -85,7 +85,25 @@ namespace Show
                 {
                     AddImageItem((SlideImage)si);
                 }
+                else if(si.GetType() == typeof(SlideRectangle))
+                {
+                    AddRectangleItem((SlideRectangle)si);
+                }
             }
+        }
+
+        private void AddRectangleItem(SlideRectangle rect)
+        {
+            Rectangle fe = new Rectangle();
+            if (rect.UpperLeft == null || rect.LowerRight == null) return;
+            Canvas.SetLeft(fe, rect.UpperLeft.Value.X * 1600);
+            Canvas.SetTop(fe, rect.UpperLeft.Value.Y * 900);
+            fe.Width = (rect.LowerRight.Value.X - rect.UpperLeft.Value.X) * 1600;
+            fe.Height = (rect.LowerRight.Value.Y - rect.UpperLeft.Value.Y) * 900;
+            fe.Fill = BrushFromColor(rect.FillColor);
+            fe.Stroke = BrushFromColor(rect.BorderColor);
+            fe.StrokeThickness = rect.BorderWidth;
+            grid.Children.Add(fe);
         }
 
         public void AddTextItem(SlideText text)

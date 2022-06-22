@@ -36,6 +36,7 @@
                     <Image Source="C:\repos\wpf_slideshow\SampleShow\The_World_as_100_People.png"
                        Width="600" />
                 </Border>-->
+                <!--<Rectangle Fill="AliceBlue" Stroke="Aqua" Width="50" Height="30"/>-->
             </Canvas>
         </Grid>
     </Viewbox>

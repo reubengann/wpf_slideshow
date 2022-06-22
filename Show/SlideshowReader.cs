@@ -250,6 +250,15 @@ namespace Show
                             }
                             catch (FormatException) { continue; }
                             break;
+                        case "rect":
+                            if (CurrentSlide == null) { PrintNoSlideError("rect", lineCounter); continue; };
+                            try
+                            {
+                                SlideRectangle rect = ParseRectArgs(remainder);
+                                CurrentSlide.Add(rect);
+                            }
+                            catch (FormatException) { continue; }
+                            break;
                         default:
                             Log($"***************COMMAND {command}, RHS: {remainder}");
                             break;
@@ -282,6 +291,8 @@ namespace Show
             return slideshow;
         }
 
+        
+
         private (string, bool) ParseSlideArgs(string remainder)
         {
             string slideName = "";
@@ -306,6 +317,50 @@ namespace Show
                 slideName = attemptedslideName;
             }
             return (slideName, visible);
+        }
+
+        private SlideRectangle ParseRectArgs(string remainder)
+        {
+            string[] args = remainder.Split();
+            SlideRectangle rect = new SlideRectangle();
+            int i = 0;
+            while (i < args.Length)
+            {
+                switch (args[i])
+                {
+                    case "pos":
+                        float[] pos = ParseFourFloatsFromArray(args, i + 1);
+                        rect.UpperLeft = new Vector(pos[0], pos[1]);
+                        rect.LowerRight = new Vector(pos[2], pos[3]);
+                        i += 4;
+                        break;
+                    case "width":
+                        var width = ParseFloatIntoWithError(args[i + 1], "width");
+                        rect.BorderWidth = (int)width;
+                        i++;
+                        break;
+                    case "border_color":
+                        rect.BorderColor = GetColorFromFloats(ParseFourFloatsFromArray(args, i + 1));
+                        i += 4;
+                        break;
+                    case "color":
+                        rect.FillColor = GetColorFromFloats(ParseFourFloatsFromArray(args, i + 1));
+                        i += 4;
+                        break;
+                    default:
+                        Log($"Error on line {lineCounter}: Unknown argument {args[i]}");
+                        break;
+                }
+                i++;
+            }
+            if (rect.UpperLeft == null)
+                Log($"Error on line {lineCounter}: Rectangle specified with no position");
+            return rect;
+        }
+
+        private static float[] ParseFourFloatsFromArray(string[] args, int start)
+        {
+            return args.Skip(start).Take(4).Select(x => float.Parse(x)).ToArray();
         }
 
         private SlideImage ParseImageArgs(string remainder)

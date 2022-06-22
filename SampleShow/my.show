@@ -94,3 +94,4 @@ and also
 
 : slide
 : image snowman border_color 0 0 1 1 border_width 10 rotation 10
+: rect pos .35 .25 .85 .75 width 10 border_color 1 1 1 1 color 0 1 0 1

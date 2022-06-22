@@ -106,6 +106,15 @@ namespace Show
         }
     }
 
+    public class SlideRectangle : SlideItem
+    {
+        public Vector? UpperLeft;
+        public Vector? LowerRight;
+        public int BorderWidth = 0;
+        public Color FillColor = Color.Transparent;
+        public Color BorderColor = Color.Transparent;
+    }
+
     public class SlideImageBorder
     {
         public Color BorderColor = Color.White;
