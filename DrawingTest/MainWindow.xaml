@@ -14,6 +14,21 @@
         </ResourceDictionary>
     </Window.Resources>
     <Grid>
-        <local:DesignerCanvas Background="Transparent" Margin="10"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="70"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <ItemsControl Padding="5">
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="FrameworkElement.Margin" Value="5"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.Items>
+                <Ellipse Stroke="Black" ToolTip="Ellipse" IsHitTestVisible="false" Width="50" Height="50"/>
+                <Rectangle Stroke="Black" ToolTip="Rectangle" IsHitTestVisible="false" Width="50" Height="50"/>
+            </ItemsControl.Items>
+        </ItemsControl>
+        <local:DesignerCanvas Grid.Column="1" Background="Transparent" Margin="10"/>
     </Grid>
 </Window>
