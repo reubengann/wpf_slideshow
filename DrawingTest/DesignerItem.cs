@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace DrawingTest
 {
@@ -24,27 +25,18 @@ namespace DrawingTest
         }
         void DesignerItem_Loaded(object sender, RoutedEventArgs e)
         {
-            if (base.Template != null)
-            {
-                ContentPresenter? contentPresenter =
-                    this.Template.FindName("PART_ContentPresenter", this) as ContentPresenter;
-                if (contentPresenter != null)
-                {
-                    UIElement? contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
-                    if (contentVisual != null)
-                    {
-                        DragThumb? thumb = this.Template.FindName("PART_DragThumb", this) as DragThumb;
+            if (Template == null) return;
+            ContentPresenter? contentPresenter =
+                Template.FindName("PART_ContentPresenter", this) as ContentPresenter;
+            if (contentPresenter == null) return;
+            UIElement? contentVisual = VisualTreeHelper.GetChild(contentPresenter, 0) as UIElement;
+            if (contentVisual == null) return;
+            DragThumb? thumb = Template.FindName("PART_DragThumb", this) as DragThumb;
 
-                        if (thumb != null)
-                        {
-                            ControlTemplate template =
-                                DesignerItem.GetDragThumbTemplate(contentVisual) as ControlTemplate;
-                            if (template != null)
-                                thumb.Template = template;
-                        }
-                    }
-                }
-            }
+            if (thumb == null) return;
+            ControlTemplate template = GetDragThumbTemplate(contentVisual);
+            if (template == null) return; // use default rectangle
+            thumb.Template = template;
         }
     }
 }

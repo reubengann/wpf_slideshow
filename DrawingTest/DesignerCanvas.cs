@@ -10,7 +10,7 @@ namespace DrawingTest
         public DesignerCanvas()
         {
             DesignerItem item = new DesignerItem();
-            item.Content = new Ellipse() { Width = 100, Height = 100, Fill = new SolidColorBrush(Colors.Red), StrokeThickness = 2 };
+            item.Content = new Ellipse() { Width = 100, Height = 100, Fill = new SolidColorBrush(Colors.Red), StrokeThickness = 2, IsHitTestVisible = false };
             Children.Add(item);
         }
     }
