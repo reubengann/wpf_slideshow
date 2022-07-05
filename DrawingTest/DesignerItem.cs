@@ -9,7 +9,7 @@ namespace DrawingTest
 {
     [TemplatePart(Name = "PART_DragThumb", Type = typeof(DragThumb))]
     [TemplatePart(Name = "PART_ContentPresenter", Type = typeof(ContentPresenter))]
-    public class DesignerItem : ContentControl
+    public class DesignerItem : ContentControl, ISelectable
     {
         public static readonly DependencyProperty DragThumbTemplateProperty =
             DependencyProperty.RegisterAttached("DragThumbTemplate", typeof(ControlTemplate), typeof(DesignerItem));
@@ -18,6 +18,18 @@ namespace DrawingTest
         {
             this.Loaded += new RoutedEventHandler(DesignerItem_Loaded);
         }
+
+        public bool IsSelected
+        {
+            get { return (bool)GetValue(IsSelectedProperty); }
+            set { SetValue(IsSelectedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsSelectedProperty =
+          DependencyProperty.Register("IsSelected",
+                                       typeof(bool),
+                                       typeof(DesignerItem),
+                                       new FrameworkPropertyMetadata(false));
 
         public static ControlTemplate GetDragThumbTemplate(UIElement element)
         {
@@ -37,6 +49,12 @@ namespace DrawingTest
             ControlTemplate template = GetDragThumbTemplate(contentVisual);
             if (template == null) return; // use default rectangle
             thumb.Template = template;
+        }
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnPreviewMouseDown(e);
+            IsSelected = true;
         }
     }
 }

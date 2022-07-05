@@ -29,10 +29,22 @@
                               VerticalAlignment="Stretch"
                               Content="{TemplateBinding ContentControl.Content}"
                               Margin="{TemplateBinding ContentControl.Padding}"/>
-                        
+
+                        <!-- PART_ResizeDecorator -->
+                        <Rectangle x:Name="PART_ResizeDecorator"
+                        Visibility="Collapsed"
+                             Stroke="Red"
+                        />
+
                     </Grid>
-                    
+
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Value="True" Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}">
+                            <Setter TargetName="PART_ResizeDecorator" Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
+                
             </Setter.Value>
         </Setter>
     </Style>

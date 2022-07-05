@@ -24,14 +24,14 @@ namespace DrawingTest
         private void AddRectangle()
         {
             DesignerItem item = new DesignerItem();
-            item.Content = new Rectangle() { Width = 100, Height = 100, Fill = new SolidColorBrush(Colors.Red), StrokeThickness = 2, IsHitTestVisible = false };
+            item.Content = new Rectangle() { Width = 100, Height = 100, Stroke = new SolidColorBrush(Colors.Black), StrokeThickness = 2, IsHitTestVisible = false };
             Canvas.Add(item);
         }
 
         private void AddEllipse()
         {
             DesignerItem item = new DesignerItem();
-            item.Content = new Ellipse() { Width = 100, Height = 100, Fill = new SolidColorBrush(Colors.Red), StrokeThickness = 2, IsHitTestVisible = false };
+            item.Content = new Ellipse() { Width = 100, Height = 100, Stroke = new SolidColorBrush(Colors.Black), StrokeThickness = 2, IsHitTestVisible = false };
             Canvas.Add(item);
         }
     }
