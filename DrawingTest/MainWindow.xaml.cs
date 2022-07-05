@@ -23,6 +23,7 @@ namespace DrawingTest
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowViewModel(canvas.Children);
         }
     }
 }

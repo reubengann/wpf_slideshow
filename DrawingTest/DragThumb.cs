@@ -21,7 +21,7 @@ namespace DrawingTest
                 double minLeft = double.MaxValue;
                 double minTop = double.MaxValue;
 
-                var item = designer.Children[0];
+                var item = designerItem;
 
                 double left = Canvas.GetLeft(item);
                 double top = Canvas.GetTop(item);

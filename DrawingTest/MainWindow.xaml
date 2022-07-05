@@ -5,7 +5,9 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:local="clr-namespace:DrawingTest"
 		mc:Ignorable="d"
-		Title="MainWindow" Height="450" Width="800">
+		Title="MainWindow" Height="450" Width="800"
+        d:DataContext="{d:DesignInstance local:MainWindowViewModel, 
+            IsDesignTimeCreatable=False}">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -25,10 +27,17 @@
                 </Style>
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.Items>
+                <Button Background="Transparent" BorderBrush="Transparent" Padding="0" Margin="0" Command="{Binding AddEllipseCommand}">
                 <Ellipse Stroke="Black" ToolTip="Ellipse" IsHitTestVisible="false" Width="50" Height="50"/>
-                <Rectangle Stroke="Black" ToolTip="Rectangle" IsHitTestVisible="false" Width="50" Height="50"/>
+                </Button>
+                <Button  Background="Transparent" BorderBrush="Transparent" Padding="0" Margin="0"
+                         Command="{Binding AddRectangleCommand}">
+                    <Rectangle Stroke="Black" ToolTip="Rectangle" 
+                           IsHitTestVisible="false" Width="50" Height="50"/>
+                </Button>
             </ItemsControl.Items>
         </ItemsControl>
-        <local:DesignerCanvas Grid.Column="1" Background="Transparent" Margin="10"/>
+
+        <local:DesignerCanvas x:Name="canvas" Grid.Column="1" Background="Transparent" Margin="10"/>
     </Grid>
 </Window>
