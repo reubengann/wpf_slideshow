@@ -25,12 +25,17 @@ namespace DrawingTest
             base.OnMouseDown(e);
             if (e.Source == this)
             {
-                foreach (ISelectable item in SelectedItems)
-                    item.IsSelected = false;
-                selectedItems.Clear();
+                DeselectAll();
 
                 e.Handled = true;
             }
+        }
+
+        public void DeselectAll()
+        {
+            foreach (ISelectable item in SelectedItems)
+                item.IsSelected = false;
+            selectedItems.Clear();
         }
     }
 }

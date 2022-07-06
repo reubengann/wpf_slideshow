@@ -58,27 +58,33 @@ namespace DrawingTest
             base.OnPreviewMouseDown(e);
             if (Keyboard.Modifiers == ModifierKeys.Shift)
             {
-                if (IsSelected)
-                {
-                    IsSelected = false;
-                    designer.SelectedItems.Remove(this);
-                }
-                else
-                {
-                    IsSelected = true;
-                    designer.SelectedItems.Add(this);
-                }
+                ToggleSelected();
             }
             else if (!IsSelected)
             {
-                foreach (ISelectable item in designer.SelectedItems)
-                    item.IsSelected = false;
-
-                designer.SelectedItems.Clear();
-                IsSelected = true;
-                designer.SelectedItems.Add(this);
+                designer.DeselectAll();
+                SelectItem();
             }
             e.Handled = false;
+        }
+
+        private void SelectItem()
+        {
+            IsSelected = true;
+            designer.SelectedItems.Add(this);
+        }
+
+        private void ToggleSelected()
+        {
+            if (IsSelected)
+            {
+                IsSelected = false;
+                designer.SelectedItems.Remove(this);
+            }
+            else
+            {
+                SelectItem();
+            }
         }
     }
 }
