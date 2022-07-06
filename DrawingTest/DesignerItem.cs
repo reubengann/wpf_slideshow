@@ -56,15 +56,30 @@ namespace DrawingTest
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseDown(e);
-            if (!IsSelected)
-            {
-                foreach (ISelectable item in designer.SelectedItems)
-                    item.IsSelected = false;
+            if (designer != null)
+                if (Keyboard.Modifiers == ModifierKeys.Shift)
+                {
+                    if (IsSelected)
+                    {
+                        IsSelected = false;
+                        designer.SelectedItems.Remove(this);
+                    }
+                    else
+                    {
+                        IsSelected = true;
+                        designer.SelectedItems.Add(this);
+                    }
+                }
+                else if (!IsSelected)
+                {
+                    foreach (ISelectable item in designer.SelectedItems)
+                        item.IsSelected = false;
 
-                designer.SelectedItems.Clear();
-                IsSelected = true;
-                designer.SelectedItems.Add(this);
-            }
+                    designer.SelectedItems.Clear();
+                    IsSelected = true;
+                    designer.SelectedItems.Add(this);
+                }
+            e.Handled = false;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -20,23 +21,31 @@ namespace DrawingTest
             {
                 double minLeft = double.MaxValue;
                 double minTop = double.MaxValue;
+                var designerItems = designer.SelectedItems.Where(x => x.IsSelected);
 
-                var item = designerItem;
+                foreach (DesignerItem item in designerItems)
+                {
+                    double left = Canvas.GetLeft(item);
+                    double top = Canvas.GetTop(item);
 
-                double left = Canvas.GetLeft(item);
-                double top = Canvas.GetTop(item);
-
-                minLeft = double.IsNaN(left) ? 0 : Math.Min(left, minLeft);
-                minTop = double.IsNaN(top) ? 0 : Math.Min(top, minTop);
+                    minLeft = double.IsNaN(left) ? 0 : Math.Min(left, minLeft);
+                    minTop = double.IsNaN(top) ? 0 : Math.Min(top, minTop);
+                }
 
                 double deltaHorizontal = Math.Max(-minLeft, e.HorizontalChange);
                 double deltaVertical = Math.Max(-minTop, e.VerticalChange);
 
-                if (double.IsNaN(left)) left = 0;
-                if (double.IsNaN(top)) top = 0;
+                foreach (DesignerItem item in designerItems)
+                {
+                    double left = Canvas.GetLeft(item);
+                    double top = Canvas.GetTop(item);
 
-                Canvas.SetLeft(item, left + deltaHorizontal);
-                Canvas.SetTop(item, top + deltaVertical);
+                    if (double.IsNaN(left)) left = 0;
+                    if (double.IsNaN(top)) top = 0;
+
+                    Canvas.SetLeft(item, left + deltaHorizontal);
+                    Canvas.SetTop(item, top + deltaVertical);
+                }
 
                 designer.InvalidateMeasure();
                 e.Handled = true;
