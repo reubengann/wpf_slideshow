@@ -31,6 +31,8 @@ namespace DrawingTest
                                        typeof(DesignerItem),
                                        new FrameworkPropertyMetadata(false));
 
+        private DesignerCanvas designer => (DesignerCanvas)VisualTreeHelper.GetParent(this);
+
         public static ControlTemplate GetDragThumbTemplate(UIElement element)
         {
             return (ControlTemplate)element.GetValue(DragThumbTemplateProperty);
@@ -54,7 +56,15 @@ namespace DrawingTest
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseDown(e);
-            IsSelected = true;
+            if (!IsSelected)
+            {
+                foreach (ISelectable item in designer.SelectedItems)
+                    item.IsSelected = false;
+
+                designer.SelectedItems.Clear();
+                IsSelected = true;
+                designer.SelectedItems.Add(this);
+            }
         }
     }
 }
