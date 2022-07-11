@@ -23,15 +23,15 @@ namespace DrawingTest
 
         private void AddRectangle()
         {
-            DesignerItem item = new DesignerItem();
-            item.Content = new Rectangle() { Width = 100, Height = 100, Stroke = new SolidColorBrush(Colors.Black), StrokeThickness = 2, IsHitTestVisible = false };
+            DesignerItem item = new DesignerItem() { Width = 100, Height = 100 };
+            item.Content = new Rectangle() { Stroke = new SolidColorBrush(Colors.Black), StrokeThickness = 2, IsHitTestVisible = false };
             Canvas.Add(item);
         }
 
         private void AddEllipse()
         {
-            DesignerItem item = new DesignerItem();
-            item.Content = new Ellipse() { Width = 100, Height = 100, Stroke = new SolidColorBrush(Colors.Black), StrokeThickness = 2, IsHitTestVisible = false };
+            DesignerItem item = new DesignerItem() { Width = 100, Height = 100 };
+            item.Content = new Ellipse() { Stroke = new SolidColorBrush(Colors.Black), StrokeThickness = 2, IsHitTestVisible = false };
             Canvas.Add(item);
         }
     }

@@ -36,13 +36,20 @@
                      VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
             <Border BorderThickness="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <Border.BorderBrush>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Rectangle StrokeDashArray="4 2" Stroke="Gray" StrokeThickness="1"
-                  Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualWidth}"
-                  Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Border}}, Path=ActualHeight}"/>
-                        </VisualBrush.Visual>
-                    </VisualBrush>
+                    <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                        <DrawingBrush.Drawing>
+                            <DrawingGroup>
+                                <GeometryDrawing Brush="Black">
+                                    <GeometryDrawing.Geometry>
+                                        <GeometryGroup>
+                                            <RectangleGeometry Rect="0,0,50,50" />
+                                            <RectangleGeometry Rect="50,50,50,50" />
+                                        </GeometryGroup>
+                                    </GeometryDrawing.Geometry>
+                                </GeometryDrawing>
+                            </DrawingGroup>
+                        </DrawingBrush.Drawing>
+                    </DrawingBrush>
                 </Border.BorderBrush>
             </Border>
         </Grid>
